@@ -1,25 +1,45 @@
-# Fair Drop (frontend + admin)
+# Fair Drop
 
-GDG On Campus CRCE, Bit N Build, problem statement 3: selling 500 seats to 50,000 people without letting bots win.
+The backend implements the functional MVP: authenticated registration, a permanent randomized
+queue, FIFO offers, three-minute reservations, confirmation, and automatic inventory recovery.
 
+| Directory | Purpose |
+| --- | --- |
+| `frontend/` | Existing Next.js participant/admin UI and mock implementation |
+| `backend/` | FastAPI API, allocation services, independent expiration worker, tests |
+| `supabase/migrations/` | Authoritative PostgreSQL schema and constraints |
+| `docs/` | Backend PRD and API integration notes |
+
+## Backend
+
+See [backend/README.md](backend/README.md) for environment setup, database migration,
+Google sign-in configuration, event/admin bootstrap, and test commands.
+
+```sh
+cd backend
+uv sync --locked
+# Copy .env.example to .env and configure Supabase/database/security settings.
+uv run uvicorn app.main:create_app --factory --reload --port 8000
+# Separate terminal/process, from backend/:
+uv run python -m app.workers.expiration_worker
 ```
-npm install
-cp .env.example .env.local   # works as-is in mock mode
-npm run dev                  # http://localhost:3000
+
+API documentation: `http://localhost:8000/docs`. All application routes use `/api/v1`.
+Health: `/health/live`, `/health/ready`.
+
+## Frontend
+
+```sh
+cd frontend
+npm ci
+npm run dev
 ```
 
-- Participant flow: `/` → `/register` → `/waiting-room` → `/reserve` → `/confirmed` (`/status` for end states). Mock scenario panel bottom-right, or `?scenario=queued|admitted|expiring|expired|confirmed|sold_out|rate_limited|offline|demo_timeline…`.
-- Admin: `/admin` (demo admin button in mock mode).
-- Tests: `npx vitest run` (unit), `npx playwright test` (e2e, starts dev server on :3100).
+The participant UI and live admin dashboard now use the PRD backend through a validated
+adapter. Set `NEXT_PUBLIC_API_MODE=live` and `NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000/api/v1`.
+The saved local configuration uses the test Supabase project. Sign in at `/login`.
+The endpoint mapping is in [docs/BACKEND_INTEGRATION.md](docs/BACKEND_INTEGRATION.md).
+The original simulation dashboard is available in mock mode.
+Use `frontend/` as the project root for frontend hosting and tooling.
 
-Backend teams: read `INTEGRATION.md`. Design notes: `DESIGN.md`. Release history & updates: [`CHANGELOG.md`](./CHANGELOG.md).
-
-| Path | What |
-|---|---|
-| `lib/contracts` | zod schemas for every request/response |
-| `lib/api` | `live.ts`, `mock.ts`, `index.ts` (mode switch) |
-| `lib/realtime` | SSE / polling transport |
-| `lib/state` | journey routing + provider |
-| `lib/sim` | FIFO vs protected allocation model |
-| `app/(site)`, `app/admin` | screens (Zinc + Emerald Modern Glass UI) |
-| `CHANGELOG.md` | detailed breakdown of all changes & release notes |
+DigitalOcean deployment and large-scale benchmarking are deferred.

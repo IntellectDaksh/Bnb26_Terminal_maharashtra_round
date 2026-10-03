@@ -1,0 +1,20 @@
+services:
+  api:
+    build: ./backend
+    env_file: ./backend/.env
+    ports:
+      - "127.0.0.1:8000:8000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready', timeout=5)"]
+      interval: 15s
+      timeout: 6s
+      retries: 3
+  expiration-worker:
+    build: ./backend
+    env_file: ./backend/.env
+    command: ["python", "-m", "app.workers.expiration_worker"]
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
