@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+/* Warm paper, slate ink, terracotta + amber accents, sage for "done". */
+:root {
+  --bg: #fcf8f2;
+  --bg-2: #f6eee3;
+  --surface: #fffdf9;
+  --fg: #33404b;
+  --muted: #6b7680;
+  --line: #ecdfd0;
+  --accent: #c8645e;
+  --accent-ink: #ffffff;
+  --accent-2: #e9b466;
+  --accent-soft: #f8e6cb;
+  --success: #5f8f70;
+  --success-soft: #e2eee5;
+  --danger: #ad4a43;
+  --chart-grey: #c9bba8;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-2: var(--accent-2);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-danger: var(--danger);
+  --color-chart-grey: var(--chart-grey);
+  --font-sans: var(--font-body), system-ui, sans-serif;
+  --font-serif: var(--font-display), Georgia, serif;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-soft: 0 18px 40px -26px rgba(122, 82, 44, 0.35);
+}
+
+html {
+  color-scheme: light;
+  background: var(--bg);
+}
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body), system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.num {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* editorial serif headline; <em> inside gets the warm accent */
+.display {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.012em;
+  line-height: 1.02;
+  color: var(--fg);
+}
+.display em,
+.accent-italic {
+  font-style: italic;
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-right: 0.06em;
+}
+
+.serif {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* faint paper grain so large cream areas don't feel flat */
+.paper {
+  background-image: radial-gradient(rgba(150, 110, 70, 0.05) 1px, transparent 1px);
+  background-size: 6px 6px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee {
+  animation: marquee 60s linear infinite;
+}
+.marquee-rev {
+  animation: marquee 75s linear infinite reverse;
+}
+
+@keyframes dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.2;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+.dots span {
+  animation: dot 1.2s infinite both;
+}
+.dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.rise {
+  animation: rise 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes float {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  50% {
+    opacity: 0.35;
+  }
+}
+.pulse-dot {
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
