@@ -1,21 +1,30 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Nunito_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const display = Cormorant_Garamond({ variable: "--font-display", subsets: ["latin"], weight: ["500", "600"], style: ["normal", "italic"] });
-const body = Nunito_Sans({ variable: "--font-body", subsets: ["latin"] });
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
-  title: "Fair Drop: tickets without the race",
+  title: "Fair Drop | Anti-Bot Flash Ticket Drops",
   description: "Book high-demand events fairly. One entry per person, a randomized queue, and no advantage for bots.",
 };
 
-export const viewport: Viewport = { themeColor: "#fcf8f2", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = {
+  themeColor: "#09090b",
+  width: "device-width",
+  initialScale: 1,
+};
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col">{children}</body>
+    <html lang="en" className={`${inter.variable} scroll-smooth h-full antialiased`}>
+      <body className="flex min-h-full flex-col bg-zinc-50 text-zinc-900 font-sans selection:bg-emerald-900 selection:text-white">
+        {children}
+      </body>
     </html>
   );
 }

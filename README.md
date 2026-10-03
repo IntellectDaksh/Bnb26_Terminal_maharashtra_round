@@ -12,7 +12,7 @@ npm run dev                  # http://localhost:3000
 - Admin: `/admin` (demo admin button in mock mode).
 - Tests: `npx vitest run` (unit), `npx playwright test` (e2e, starts dev server on :3100).
 
-Backend teams: read `INTEGRATION.md`. Design notes: `DESIGN.md`.
+Backend teams: read `INTEGRATION.md`. Design notes: `DESIGN.md`. Release history & updates: [`CHANGELOG.md`](./CHANGELOG.md).
 
 | Path | What |
 |---|---|
@@ -21,4 +21,5 @@ Backend teams: read `INTEGRATION.md`. Design notes: `DESIGN.md`.
 | `lib/realtime` | SSE / polling transport |
 | `lib/state` | journey routing + provider |
 | `lib/sim` | FIFO vs protected allocation model |
-| `app/(participant)`, `app/admin` | screens |
+| `app/(site)`, `app/admin` | screens (Zinc + Emerald Modern Glass UI) |
+| `CHANGELOG.md` | detailed breakdown of all changes & release notes |

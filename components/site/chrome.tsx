@@ -10,115 +10,159 @@ import { eventPath, routeFor, type Route } from "@/lib/state/journey";
 import { useJourney } from "@/lib/state/JourneyProvider";
 import { Button, buttonClass, cx, ErrorState, LoadingDots, Wordmark } from "@/components/ui";
 
-export const PAD = "px-5 sm:px-8 lg:px-12";
-export const WRAP = "mx-auto w-full max-w-[1280px]";
+export const PAD = "px-4 sm:px-6 lg:px-8";
+export const WRAP = "max-w-7xl mx-auto";
 
 const NAV = [
-  ["/events", "Events"],
-  ["/#how", "How it works"],
+  ["/events", "Drops"],
+  ["/#how", "How It Works"],
+  ["/#defense", "Anti-Bot Defense"],
   ["/#faq", "FAQ"],
-  ["/my-tickets", "My tickets"],
+  ["/my-tickets", "My Tickets"],
 ] as const;
 
-/** Floating pill navigation. */
+/** Floating pill navigation matching the new modern glass template */
 export function SiteHeader() {
   const { user, signOut } = useAuth();
   const [open, setOpen] = useState(false);
   const path = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 px-3 pt-3 sm:pt-4">
-      <div className="mx-auto flex h-14 max-w-[880px] items-center justify-between gap-3 rounded-full border border-line/80 bg-surface/85 pl-5 pr-2 shadow-[var(--shadow-soft)] backdrop-blur-md">
-        <Link href="/" aria-label="Fair Drop home" className="shrink-0">
-          <Wordmark className="text-[20px]" />
-        </Link>
-        <span className="hidden h-5 w-px bg-line md:block" aria-hidden />
-        <nav aria-label="Main" className="hidden flex-1 items-center gap-6 text-[15px] text-muted md:flex">
-          {NAV.map(([href, label]) => (
-            <Link key={href} href={href} className={cx("transition-colors hover:text-fg", path === href && "text-fg")}>
-              {label}
-            </Link>
-          ))}
-        </nav>
-        <div className="flex items-center gap-2">
-          {user ? (
-            <button
-              onClick={() => void signOut()}
-              title={`${user.name}. Sign out`}
-              aria-label={`Signed in as ${user.name}. Sign out`}
-              className="serif hidden size-9 place-items-center rounded-full bg-accent-soft text-[17px] font-semibold text-[#8a5a1f] sm:grid"
-            >
-              {user.name.slice(0, 1).toUpperCase()}
-            </button>
-          ) : null}
-          <Link href="/events" className={cx(buttonClass("primary", "sm"), "h-10 px-5")}>
-            Browse drops
+    <header className="fixed top-0 left-0 right-0 z-50 px-4 py-4 md:px-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="glass-panel border border-zinc-200/60 rounded-full px-5 py-3 flex items-center justify-between shadow-sm">
+          <Link href="/" aria-label="Fair Drop home" className="text-sm font-semibold tracking-tight uppercase flex items-center gap-2.5 text-zinc-900">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 shadow-[0_0_8px_rgba(5,150,105,0.4)]" aria-hidden />
+            FAIR DROP
           </Link>
-          <button
-            className="grid size-10 place-items-center rounded-full text-fg md:hidden"
-            aria-label="Menu"
-            aria-expanded={open}
-            onClick={() => setOpen((o) => !o)}
-          >
-            <svg viewBox="0 0 20 20" className="size-5" aria-hidden>
-              <path d={open ? "M5 5l10 10M15 5L5 15" : "M3 7h14M3 13h14"} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            </svg>
-          </button>
-        </div>
-      </div>
-      {open && (
-        <nav aria-label="Mobile" className="rise mx-auto mt-2 max-w-[880px] rounded-[20px] border border-line bg-surface p-3 shadow-[var(--shadow-soft)] md:hidden">
-          {NAV.map(([href, label]) => (
-            <Link key={href} href={href} onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-[15px] hover:bg-bg-2">
-              {label}
+
+          <nav aria-label="Main" className="hidden md:flex gap-7 text-sm font-medium text-zinc-600 items-center">
+            {NAV.map(([href, label]) => (
+              <Link
+                key={href}
+                href={href}
+                className={cx(
+                  "hover:text-emerald-700 transition-colors",
+                  path === href && "text-emerald-600 font-semibold"
+                )}
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-2.5">
+            {user ? (
+              <button
+                onClick={() => void signOut()}
+                title={`${user.name}. Click to sign out`}
+                aria-label={`Signed in as ${user.name}. Sign out`}
+                className="hidden sm:inline-flex items-center gap-2 text-xs font-medium text-zinc-700 bg-zinc-100 hover:bg-zinc-200 rounded-full py-1.5 px-3 transition-colors"
+              >
+                <span className="size-2 rounded-full bg-emerald-500" />
+                {user.name.split(" ")[0]}
+              </button>
+            ) : null}
+
+            <Link
+              href="/events"
+              className="group flex items-center gap-2 hover:bg-zinc-800 transition-colors text-xs font-medium text-white bg-zinc-900 rounded-full py-2 px-4 shadow-sm"
+            >
+              Browse drops
+              <span aria-hidden className="group-hover:translate-x-0.5 transition-transform text-zinc-400">→</span>
             </Link>
-          ))}
-          {user && (
-            <button onClick={() => void signOut()} className="block w-full rounded-xl px-4 py-3 text-left text-[15px] text-muted hover:bg-bg-2">
-              Sign out ({user.name})
+
+            <button
+              className="grid size-9 place-items-center rounded-full text-zinc-800 hover:bg-zinc-100 md:hidden"
+              aria-label="Menu"
+              aria-expanded={open}
+              onClick={() => setOpen((o) => !o)}
+            >
+              <svg viewBox="0 0 20 20" className="size-5" aria-hidden>
+                <path d={open ? "M5 5l10 10M15 5L5 15" : "M3 7h14M3 13h14"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
             </button>
-          )}
-        </nav>
-      )}
+          </div>
+        </div>
+
+        {open && (
+          <nav aria-label="Mobile" className="rise glass-panel mt-2 rounded-3xl border border-zinc-200/80 p-4 shadow-xl md:hidden">
+            <div className="space-y-1">
+              {NAV.map(([href, label]) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setOpen(false)}
+                  className="block rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
+                >
+                  {label}
+                </Link>
+              ))}
+            </div>
+            {user && (
+              <div className="mt-3 pt-3 border-t border-zinc-100 flex items-center justify-between px-2">
+                <span className="text-xs text-zinc-500 font-light">Signed in as {user.name}</span>
+                <button
+                  onClick={() => void signOut()}
+                  className="text-xs font-semibold text-red-600 hover:underline"
+                >
+                  Sign out
+                </button>
+              </div>
+            )}
+          </nav>
+        )}
+      </div>
     </header>
   );
 }
 
+/** Modern dark footer matching the template design */
 export function SiteFooter() {
   return (
-    <footer className={cx("mt-auto border-t border-line bg-bg-2/60", PAD)}>
-      <div className={cx(WRAP, "grid gap-8 py-12 sm:grid-cols-[1.4fr_1fr_1fr]")}>
-        <div>
-          <Wordmark />
-          <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
-            Ticket drops where speed, refreshes and bots don&apos;t decide who gets in. One person, one entry, a random queue.
+    <footer className="bg-zinc-900 text-zinc-400 py-16 px-6 border-t border-white/5 mt-auto">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-12">
+        <div className="space-y-5 md:w-1/3">
+          <div className="text-sm font-semibold tracking-tight uppercase flex items-center gap-2.5 text-white">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+            FAIR DROP
+          </div>
+          <p className="text-sm font-light leading-relaxed text-zinc-400">
+            Selling high-contention tickets without letting bots win. One entry per person, randomized queue shuffling, and server-protected reservations.
           </p>
+          <div className="flex items-center gap-2 text-xs text-zinc-500 font-light">
+            <span className="inline-block size-1.5 rounded-full bg-emerald-400"></span>
+            GDG On Campus CRCE · Bit N Build 2026
+          </div>
         </div>
-        <div className="text-sm">
-          <div className="eyebrow mb-3">Explore</div>
-          <ul className="space-y-2 text-muted">
-            <li>
-              <Link href="/events" className="hover:text-fg">
-                All events
-              </Link>
-            </li>
-            <li>
-              <Link href="/my-tickets" className="hover:text-fg">
-                My tickets
-              </Link>
-            </li>
-            <li>
-              <Link href="/#how" className="hover:text-fg">
-                How it works
-              </Link>
-            </li>
-          </ul>
+
+        <div className="grid grid-cols-2 gap-12 md:w-1/2">
+          <div className="space-y-4">
+            <h4 className="text-xs font-semibold text-white uppercase tracking-widest">Platform</h4>
+            <ul className="text-sm space-y-2.5 font-light">
+              <li><Link href="/events" className="hover:text-emerald-400 transition-colors">All Drops</Link></li>
+              <li><Link href="/my-tickets" className="hover:text-emerald-400 transition-colors">My Tickets</Link></li>
+              <li><Link href="/#how" className="hover:text-emerald-400 transition-colors">How It Works</Link></li>
+              <li><Link href="/#defense" className="hover:text-emerald-400 transition-colors">Bot Defense</Link></li>
+              <li><Link href="/#faq" className="hover:text-emerald-400 transition-colors">FAQ</Link></li>
+            </ul>
+          </div>
+
+          <div className="space-y-4">
+            <h4 className="text-xs font-semibold text-white uppercase tracking-widest">Admin & Control</h4>
+            <ul className="text-sm space-y-2.5 font-light">
+              <li><Link href="/admin" className="hover:text-emerald-400 transition-colors">Admin Dashboard</Link></li>
+              <li><Link href="/admin/queue" className="hover:text-emerald-400 transition-colors">Fairness Comparison</Link></li>
+              <li><Link href="/admin/traffic" className="hover:text-emerald-400 transition-colors">Traffic Telemetry</Link></li>
+              <li><Link href="/admin/security" className="hover:text-emerald-400 transition-colors">Security Feed</Link></li>
+            </ul>
+          </div>
         </div>
-        <div className="text-sm">
-          <div className="eyebrow mb-3">Built for</div>
-          <p className="text-muted">GDG On Campus CRCE · Bit N Build 2026 · Problem statement 3</p>
-          {API_MODE === "mock" && <p className="mt-3 text-xs text-muted/80">Prototype: events and numbers are sample data.</p>}
-        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between text-xs font-light text-zinc-500 gap-4">
+        <p>© 2026 Fair Drop. GDG Bit N Build Hackathon — Problem Statement 3.</p>
+        <p>Built with Next.js, Turnstile &amp; Supabase SSR.</p>
       </div>
     </footer>
   );
@@ -136,7 +180,7 @@ export function useRouteGuard(here: Route, alsoFor?: Route) {
 }
 
 export function PageShell({ children, className }: { children: ReactNode; className?: string }) {
-  return <main className={cx(WRAP, "flex-1 py-12 sm:py-16", PAD, className)}>{children}</main>;
+  return <main className={cx(WRAP, "flex-1 pt-28 pb-16 sm:pb-24", PAD, className)}>{children}</main>;
 }
 
 const RESTORING: Partial<Record<Route, string>> = {
@@ -152,11 +196,11 @@ export function LoadState({ route }: { route?: Route }) {
     return (
       <PageShell>
         <ErrorState
-          title="We couldn't find that event"
-          body="It may have been removed, or the link is wrong."
+          title="Drop Not Found"
+          body="This event drop does not exist or may have been concluded."
           action={
-            <Link href="/events" className={buttonClass()}>
-              Browse events
+            <Link href="/events" className={buttonClass("primary")}>
+              Browse Events
             </Link>
           }
         />
@@ -167,10 +211,10 @@ export function LoadState({ route }: { route?: Route }) {
       <PageShell>
         <ErrorState
           title="Sign in to continue"
-          body="Your entry is tied to your Google account, so it's there on any device."
+          body="Your queue position is protected and tied to your verified account."
           action={
-            <Link href={eventPath(eventId, "register")} className={buttonClass()}>
-              Sign in <span aria-hidden>→</span>
+            <Link href={eventPath(eventId, "register")} className={buttonClass("primary")}>
+              Sign In <span aria-hidden>→</span>
             </Link>
           }
         />
@@ -180,16 +224,16 @@ export function LoadState({ route }: { route?: Route }) {
     return (
       <PageShell>
         <ErrorState
-          title="Something went wrong"
-          body="We couldn't restore your session. Your entry is safe on the server."
-          action={<Button onClick={() => void refresh()}>Try again</Button>}
+          title="Connection Reconnecting"
+          body="Could not refresh session state. Your entry is safe on the server."
+          action={<Button variant="primary" onClick={() => void refresh()}>Try Again</Button>}
         />
       </PageShell>
     );
   return (
     <PageShell>
       <div className="flex min-h-[45vh] items-center justify-center" aria-busy="true">
-        <LoadingDots>{(route && RESTORING[route]) ?? "Loading"}</LoadingDots>
+        <LoadingDots>{(route && RESTORING[route]) ?? "Connecting to Fair Drop"}</LoadingDots>
       </div>
     </PageShell>
   );
@@ -204,9 +248,9 @@ export function RestoredNote({ children = "Position restored" }: { children?: Re
   }, []);
   if (!restored) return null;
   return (
-    <span role="status" className={cx("inline-flex items-center gap-1.5 text-[13px] font-semibold text-success transition-opacity duration-500", !show && "opacity-0")}>
+    <span role="status" className={cx("inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/70 transition-opacity duration-500", !show && "opacity-0")}>
       <svg viewBox="0 0 16 16" className="size-3.5" aria-hidden>
-        <path d="M3 8.5l3 3 7-7" stroke="currentColor" strokeWidth="1.8" fill="none" />
+        <path d="M3 8.5l3 3 7-7" stroke="currentColor" strokeWidth="2" fill="none" />
       </svg>
       {children}
     </span>
@@ -215,7 +259,7 @@ export function RestoredNote({ children = "Position restored" }: { children?: Re
 
 export function BackLink({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <Link href={href} className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-fg">
+    <Link href={href} className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-zinc-500 hover:text-emerald-600 transition-colors">
       <span aria-hidden>←</span> {children}
     </Link>
   );
@@ -238,29 +282,39 @@ export function DevPanel() {
     void refresh();
   };
   return (
-    <div className="fixed bottom-4 right-4 z-40 text-xs">
+    <div className="fixed bottom-4 right-4 z-50 text-xs">
       {open ? (
-        <div className="rise w-64 rounded-[20px] border border-line bg-surface p-4 shadow-[var(--shadow-soft)]">
-          <div className="mb-3 flex items-center justify-between">
-            <span className="eyebrow">Demo states</span>
-            <button className="text-muted hover:text-fg" onClick={() => setOpen(false)} aria-label="Close demo panel">
-              Close
+        <div className="rise w-72 rounded-3xl border border-zinc-200/80 bg-white/95 backdrop-blur-md p-4 shadow-2xl">
+          <div className="mb-3 flex items-center justify-between pb-2 border-b border-zinc-100">
+            <span className="text-xs font-semibold uppercase tracking-wider text-emerald-600">Demo Scenarios</span>
+            <button className="text-zinc-400 hover:text-zinc-700 text-xs" onClick={() => setOpen(false)} aria-label="Close demo panel">
+              ✕
             </button>
           </div>
-          <div className="flex flex-wrap gap-1" data-testid="dev-scenarios">
+          <div className="flex flex-wrap gap-1.5" data-testid="dev-scenarios">
             {SCENARIOS.map((s) => (
-              <button key={s} onClick={() => go(s)} className="rounded-full border border-line px-2.5 py-1 text-muted hover:border-accent hover:text-accent">
+              <button
+                key={s}
+                onClick={() => go(s)}
+                className="rounded-full border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-[11px] font-medium text-zinc-600 hover:border-emerald-500 hover:bg-emerald-50 hover:text-emerald-700 transition-all"
+              >
                 {s.replace(/_/g, " ")}
               </button>
             ))}
           </div>
-          <Link href={`/admin?event=${eventId}`} className="mt-4 block font-semibold text-accent">
-            Open admin <span aria-hidden>→</span>
-          </Link>
+          <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between">
+            <Link href={`/admin?event=${eventId}`} className="font-semibold text-emerald-600 hover:text-emerald-700 text-xs">
+              Open Admin Console →
+            </Link>
+          </div>
         </div>
       ) : (
-        <button onClick={() => setOpen(true)} className="rounded-full border border-line bg-surface px-4 py-2 font-semibold text-muted shadow-[var(--shadow-soft)] hover:text-fg">
-          Demo
+        <button
+          onClick={() => setOpen(true)}
+          className="flex items-center gap-2 rounded-full border border-zinc-200/80 bg-white/90 backdrop-blur-md px-3.5 py-2 text-xs font-medium text-zinc-700 shadow-md hover:border-emerald-500 hover:text-emerald-600 transition-all"
+        >
+          <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+          Demo Scenarios
         </button>
       )}
     </div>

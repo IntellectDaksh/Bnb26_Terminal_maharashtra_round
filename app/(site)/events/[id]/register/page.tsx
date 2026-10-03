@@ -11,7 +11,7 @@ import { BackLink, LoadState, PageShell, useRouteGuard } from "@/components/site
 import { fmtDate, fmtPrice } from "@/components/site/format";
 import { errorCopy, stableKey, useAction } from "@/components/site/useAction";
 import { EventArt } from "@/components/illustrations";
-import { Button, buttonClass, Checkbox, cx, ErrorState, Input, Select } from "@/components/ui";
+import { buttonClass, cx, ErrorState } from "@/components/ui";
 
 // Cloudflare's always-pass test key keeps local dev and mock demos working without setup.
 const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA";
@@ -35,7 +35,7 @@ async function verifyLocally(token: string) {
 
 function GoogleMark() {
   return (
-    <svg viewBox="0 0 24 24" className="size-[18px]" aria-hidden>
+    <svg viewBox="0 0 24 24" className="size-5 shrink-0" aria-hidden>
       <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.2-2.1 3.5-5.1 3.5-8.7Z" />
       <path fill="#34A853" d="M12 24c3.2 0 6-1.1 7.9-2.9l-3.9-3a7.2 7.2 0 0 1-10.8-3.8h-4v3.1A12 12 0 0 0 12 24Z" />
       <path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6h-4a12 12 0 0 0 0 10.8l4-3.1Z" />
@@ -44,17 +44,12 @@ function GoogleMark() {
   );
 }
 
-function CheckIcon() {
-  return (
-    <span className="grid size-5 place-items-center rounded-full bg-success text-white" aria-label="Done">
-      <svg viewBox="0 0 16 16" className="size-3" aria-hidden>
-        <path d="M3.5 8.5l3 3 6-6.5" stroke="currentColor" strokeWidth="2" fill="none" />
-      </svg>
-    </span>
-  );
-}
-
-const STEPS = ["Sign in", "Your details", "Human check", "Enter the drop"];
+const STEPS = [
+  { num: 1, label: "Sign In" },
+  { num: 2, label: "Details" },
+  { num: 3, label: "Human Check" },
+  { num: 4, label: "Enter Drop" },
+];
 
 export default function Register() {
   const me = useRouteGuard("register");
@@ -114,69 +109,197 @@ export default function Register() {
   return (
     <PageShell className="pt-8 sm:pt-10">
       <BackLink href={eventPath(eventId)}>{event.name}</BackLink>
-      <div className="mt-8 grid gap-12 lg:grid-cols-[1.25fr_1fr] lg:gap-16">
-        <div className="rounded-[26px] border border-line/80 bg-surface p-7 shadow-[var(--shadow-soft)] sm:p-12">
-          <div className="flex items-center gap-4">
-            <span className="num shrink-0 text-[13px] font-bold text-accent">Step {step + 1} of 4</span>
-            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-line">
-              <div className="h-full rounded-full bg-gradient-to-r from-accent-2 to-accent transition-[width] duration-300" style={{ width: `${((step + 1) / 4) * 100}%` }} />
+      
+      <div className="mt-8 grid gap-10 lg:grid-cols-[1.3fr_1fr] lg:gap-14">
+        {/* Main Registration Card */}
+        <div className="bg-white p-8 md:p-12 rounded-3xl border border-zinc-200/80 shadow-xl shadow-emerald-900/5">
+          {/* 4-step visual stepper */}
+          <div className="mb-8 border-b border-zinc-100 pb-6">
+            <div className="flex items-center justify-between gap-2 sm:gap-3">
+              {STEPS.map((s, i) => {
+                const isCompleted = i < step;
+                const isCurrent = i === step;
+                return (
+                  <div key={s.label} className="flex flex-1 items-center gap-2">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={cx(
+                          "flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-all",
+                          isCompleted && "bg-emerald-600 text-white shadow-sm shadow-emerald-900/20",
+                          isCurrent && "border-2 border-emerald-600 bg-emerald-50 text-emerald-700 font-bold",
+                          !isCompleted && !isCurrent && "bg-zinc-100 text-zinc-400 border border-zinc-200/60"
+                        )}
+                      >
+                        {isCompleted ? (
+                          <svg viewBox="0 0 16 16" className="size-3.5" aria-hidden>
+                            <path d="M3.5 8.5l3 3 6-6.5" stroke="currentColor" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        ) : (
+                          s.num
+                        )}
+                      </span>
+                      <span
+                        className={cx(
+                          "hidden sm:inline text-xs font-medium whitespace-nowrap",
+                          isCurrent && "text-zinc-900 font-semibold",
+                          isCompleted && "text-emerald-700 font-medium",
+                          !isCompleted && !isCurrent && "text-zinc-400"
+                        )}
+                      >
+                        {s.label}
+                      </span>
+                    </div>
+                    {i < STEPS.length - 1 && (
+                      <div
+                        className={cx(
+                          "h-0.5 flex-1 rounded-full transition-colors mx-1",
+                          i < step ? "bg-emerald-500" : "bg-zinc-100"
+                        )}
+                      />
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
-          <h1 className="display mt-8 text-[clamp(2.4rem,5vw,3.6rem)]">
-            Join the <em>drop.</em>
-          </h1>
-          <p className="mt-3 text-[17px] text-muted">One entry per Google account. Your position is drawn at random after registration closes.</p>
+          <div>
+            <span className="eyebrow">Fair Participant Drop</span>
+            <h1 className="display mt-2 text-[clamp(2.2rem,4.5vw,3.4rem)]">
+              Join the <em className="accent-italic">drop.</em>
+            </h1>
+            <p className="mt-2 text-sm text-zinc-600">
+              One entry per verified Google account. Anti-bot and sybil resistance verified.
+            </p>
+          </div>
 
-          <div className="mt-9">
+          {/* Reassurance copy banner */}
+          <div className="mt-5 rounded-2xl border border-emerald-200/60 bg-emerald-50/50 p-4 text-xs leading-relaxed text-emerald-900 flex items-start gap-3">
+            <span className="mt-0.5 text-base leading-none" aria-hidden>🛡️</span>
+            <div>
+              <strong className="font-semibold text-emerald-950">Fair Queue Policy:</strong> Early registration does not grant early queue position. All entrants are placed into a randomized queue once registration closes, guaranteeing everyone an equal chance.
+            </div>
+          </div>
+
+          {/* Step 1: Google OAuth Section */}
+          <div className="mt-8">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-2">
+              Step 1 · Identity Verification
+            </label>
             {loading ? (
-              <div className="h-12" />
+              <div className="h-12 rounded-xl bg-zinc-100 animate-pulse" />
             ) : user ? (
-              <div className="flex h-12 items-center justify-between rounded-full border border-line bg-bg px-5 text-[15px]">
-                <span className="flex items-center gap-3">
-                  <GoogleMark />
-                  <span className="font-semibold">{user.name}</span>
-                  {user.mock && <span className="text-muted">· demo account</span>}
+              <div className="flex items-center justify-between rounded-xl border border-emerald-200/80 bg-emerald-50/40 p-3.5 text-sm">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white border border-zinc-200 shadow-sm">
+                    <GoogleMark />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-semibold text-zinc-900 truncate">{user.name}</div>
+                    <div className="text-xs text-zinc-500 truncate">{user.email || (user.mock ? "demo account" : "Google Account")}</div>
+                  </div>
+                </div>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100/90 px-3 py-1 text-xs font-semibold text-emerald-800">
+                  <svg viewBox="0 0 16 16" className="size-3" aria-hidden>
+                    <path d="M3.5 8.5l3 3 6-6.5" stroke="currentColor" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  Signed In
                 </span>
-                <CheckIcon />
               </div>
             ) : (
-              <>
-                <Button
-                  variant="secondary"
-                  className="h-12 w-full"
+              <div>
+                <button
+                  type="button"
                   onClick={() => signIn(eventPath(eventId, "register")).catch(() => setAuthError("Google sign-in didn't start. Please try again."))}
+                  className="w-full flex items-center justify-center gap-3 py-3.5 px-5 bg-white hover:bg-zinc-50 border border-zinc-200 hover:border-zinc-300 rounded-xl font-semibold text-zinc-900 shadow-sm transition-all duration-200 active:scale-[0.99]"
                 >
-                  <GoogleMark /> Continue with Google
-                </Button>
-                {authError && <p className="mt-2 text-sm text-danger">{authError}</p>}
-              </>
+                  <GoogleMark />
+                  <span>Continue with Google</span>
+                </button>
+                {authError && <p className="mt-2 text-sm text-red-600">{authError}</p>}
+              </div>
             )}
           </div>
 
-          <fieldset disabled={!user} className={cx("mt-8 space-y-6 transition-opacity", !user && "opacity-45")}>
+          {/* Step 2 & 3: Details & Turnstile */}
+          <fieldset disabled={!user} className={cx("mt-7 space-y-5 transition-opacity", !user && "opacity-45")}>
             <legend className="sr-only">Your details</legend>
-            <Input label="Full name" name="full_name" autoComplete="name" value={fullName} onChange={(e) => setName(e.target.value)} placeholder="As on your ID" />
-            <Select label="College / organization" name="organization" value={org} onChange={(e) => setOrg(e.target.value)}>
-              <option value="" disabled>
-                Select your college or organization
-              </option>
-              {ORGS.map((o) => (
-                <option key={o}>{o}</option>
-              ))}
-              <option>Other</option>
-            </Select>
-            <Checkbox checked={eligible} onChange={(e) => setEligible(e.target.checked)} label="I confirm I am eligible to participate" />
 
-            <div className={cx("rounded-[18px] border border-line bg-bg p-5", !detailsOk && "opacity-60")}>
-              <div className="flex items-center justify-between gap-3">
-                <span className="flex items-center gap-2.5 text-[15px] font-semibold">
-                  {token ? <CheckIcon /> : <span className="size-5 rounded-full border-2 border-line" aria-hidden />}
-                  {token ? "Verified" : "Verify you are human"}
-                </span>
-                <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted">Cloudflare Turnstile</span>
+            <div>
+              <label htmlFor="full_name" className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-2">
+                Step 2 · Attendee Name
+              </label>
+              <input
+                id="full_name"
+                name="full_name"
+                type="text"
+                autoComplete="name"
+                value={fullName}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="As shown on your official photo ID"
+                className="form-input"
+              />
+              <p className="mt-1 text-xs text-zinc-500">Required to match entrance ID at venue check-in.</p>
+            </div>
+
+            <div>
+              <label htmlFor="organization" className="block text-xs font-semibold uppercase tracking-wider text-zinc-700 mb-2">
+                College / Organization
+              </label>
+              <div className="relative">
+                <select
+                  id="organization"
+                  name="organization"
+                  value={org}
+                  onChange={(e) => setOrg(e.target.value)}
+                  className="form-input appearance-none bg-white pr-10 cursor-pointer"
+                >
+                  <option value="" disabled>
+                    Select your college or organization
+                  </option>
+                  {ORGS.map((o) => (
+                    <option key={o} value={o}>{o}</option>
+                  ))}
+                  <option value="Other">Other</option>
+                </select>
+                <svg viewBox="0 0 16 16" className="pointer-events-none absolute right-3.5 top-1/2 size-4 -translate-y-1/2 text-zinc-400" aria-hidden>
+                  <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </div>
-              <div className="mt-3 min-h-[65px]">
+            </div>
+
+            <div className="pt-1">
+              <label className="flex cursor-pointer items-start gap-3 text-sm text-zinc-700 select-none">
+                <input
+                  type="checkbox"
+                  checked={eligible}
+                  onChange={(e) => setEligible(e.target.checked)}
+                  className="mt-0.5 size-4.5 shrink-0 rounded cursor-pointer accent-emerald-600"
+                />
+                <span className="leading-snug">
+                  I confirm I am eligible to participate according to event rules and accept the 1-ticket limit.
+                </span>
+              </label>
+            </div>
+
+            {/* Step 3: Turnstile human verification container card */}
+            <div className={cx("rounded-2xl border border-zinc-200/80 bg-zinc-50/70 p-5 transition-all", !detailsOk && "opacity-60")}>
+              <div className="flex items-center justify-between gap-3">
+                <span className="flex items-center gap-2 text-sm font-semibold text-zinc-900">
+                  {token ? (
+                    <span className="flex size-5 items-center justify-center rounded-full bg-emerald-600 text-white">
+                      <svg viewBox="0 0 16 16" className="size-3" aria-hidden>
+                        <path d="M3.5 8.5l3 3 6-6.5" stroke="currentColor" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>
+                  ) : (
+                    <span className="size-5 rounded-full border-2 border-zinc-300" aria-hidden />
+                  )}
+                  {token ? "Verification Complete" : "Step 3 · Human Verification"}
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-500">Cloudflare Turnstile</span>
+              </div>
+              <div className="mt-3.5 min-h-[65px] flex items-center justify-center sm:justify-start">
                 {user && detailsOk ? (
                   <Turnstile
                     ref={ts}
@@ -190,60 +313,93 @@ export default function Register() {
                     onError={() => setCaptchaError(true)}
                   />
                 ) : (
-                  <p className="pt-4 text-[13px] text-muted">Fill in your details to start the check.</p>
+                  <p className="py-2 text-xs text-zinc-500">
+                    {!user ? "Sign in with Google to enable verification." : "Provide your full name and select an organization above to verify."}
+                  </p>
                 )}
               </div>
-              {captchaError && <p className="mt-2 text-sm text-danger">The check couldn&apos;t load. Turn off content blockers for this page or try another network.</p>}
+              {captchaError && (
+                <p className="mt-2 text-xs font-medium text-red-600">
+                  Verification couldn&apos;t load. Please disable ad-blockers or try another network.
+                </p>
+              )}
             </div>
           </fieldset>
 
-          <Button size="lg" className="mt-9 w-full" disabled={step < 3 || action.blocked} loading={action.pending} onClick={onSubmit}>
-            {action.retryIn > 0 ? (
+          {/* High-impact emerald CTA button */}
+          <button
+            type="button"
+            disabled={step < 3 || action.blocked}
+            onClick={onSubmit}
+            className="mt-8 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-4 rounded-xl shadow-lg shadow-emerald-900/10 transition-all duration-200 flex items-center justify-center gap-2 text-base active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {action.pending ? (
+              <>
+                <span className="size-4 animate-spin rounded-full border-2 border-white border-r-transparent" aria-hidden />
+                <span>Securing Your Entry...</span>
+              </>
+            ) : action.retryIn > 0 ? (
               `Try again in ${action.retryIn}s`
             ) : (
               <>
-                Continue <span aria-hidden>→</span>
+                <span>Enter the Drop</span>
+                <span aria-hidden>→</span>
               </>
             )}
-          </Button>
+          </button>
+
           {action.error && (
-            <p role="alert" className="mt-4 text-sm text-danger">
+            <p role="alert" className="mt-4 text-center text-sm font-medium text-red-600">
               {errorCopy(action.error, action.retryIn)}
             </p>
           )}
-          <p className="mt-4 text-center text-[13px] text-muted">Submitting twice is safe. It always returns your one entry.</p>
+
+          <p className="mt-4 text-center text-xs text-zinc-500">
+            Submitting twice is safe. Idempotency guarantees exactly one entry is recorded.
+          </p>
         </div>
 
+        {/* Aside: Event Overview & Trust Signals */}
         <aside className="hidden lg:block">
-          <div className="sticky top-24">
-            <div className="overflow-hidden rounded-[22px] border border-line/80 bg-bg-2">
-              <EventArt category={event.category} className="aspect-[3/2] w-full" />
-            </div>
-            <div className="mt-5">
-              <div className="serif text-3xl font-semibold">{event.name}</div>
-              <div className="mt-1 text-muted">
-                {fmtDate(event.starts_at)} · {event.city} · {fmtPrice(event.price_inr)}
+          <div className="sticky top-24 space-y-6">
+            <div className="overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-sm p-6">
+              <div className="overflow-hidden rounded-2xl border border-zinc-100 bg-zinc-50">
+                <EventArt category={event.category} className="aspect-[3/2] w-full" />
+              </div>
+              <div className="mt-5">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Event Overview</span>
+                <h2 className="serif text-2xl font-semibold text-zinc-900 mt-1">{event.name}</h2>
+                <div className="mt-2 text-sm text-zinc-600 flex flex-col gap-1">
+                  <span>{fmtDate(event.starts_at)}</span>
+                  <span>{event.venue}, {event.city}</span>
+                  <span className="font-semibold text-zinc-900">{fmtPrice(event.price_inr)}</span>
+                </div>
               </div>
             </div>
-            <ol className="mt-8 space-y-1">
-              {STEPS.map((s, i) => (
-                <li
-                  key={s}
-                  aria-current={i === step ? "step" : undefined}
-                  className={cx("flex items-center gap-3 rounded-full px-4 py-2.5 text-[15px]", i === step && "bg-surface font-semibold shadow-[var(--shadow-soft)]")}
-                >
-                  <span
-                    className={cx(
-                      "grid size-6 place-items-center rounded-full text-[11px] font-bold",
-                      i < step ? "bg-success-soft text-success" : i === step ? "bg-accent text-white" : "bg-bg-2 text-muted",
-                    )}
-                  >
-                    {i < step ? "✓" : i + 1}
-                  </span>
-                  <span className={i > step ? "text-muted" : ""}>{s}</span>
+
+            <div className="rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-sm">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-900 mb-4">Drop Security Guarantees</h3>
+              <ul className="space-y-3.5 text-xs text-zinc-600">
+                <li className="flex items-start gap-2.5">
+                  <span className="size-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0" />
+                  <div>
+                    <strong className="text-zinc-900 font-semibold">Random Queue Order:</strong> No advantage to fast registration. Positions are shuffled at draw time.
+                  </div>
                 </li>
-              ))}
-            </ol>
+                <li className="flex items-start gap-2.5">
+                  <span className="size-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0" />
+                  <div>
+                    <strong className="text-zinc-900 font-semibold">Sybil Resistant:</strong> One verified entrant per authenticated Google account.
+                  </div>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="size-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0" />
+                  <div>
+                    <strong className="text-zinc-900 font-semibold">Protected Claim Window:</strong> When your turn arrives, your ticket is held exclusively for you.
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
         </aside>
       </div>

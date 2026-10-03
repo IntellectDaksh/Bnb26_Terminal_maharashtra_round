@@ -6,10 +6,10 @@ import type { EventInfo, Ticket } from "@/lib/contracts";
 export function QRCard({ value, size = 132 }: { value: string; size?: number }) {
   return (
     <figure className="flex flex-col items-center">
-      <div className="rounded-[16px] border border-line bg-white p-3">
-        <QRCodeSVG value={value} size={size} level="M" bgColor="#ffffff" fgColor="#33404b" title={`Ticket ${value}`} />
+      <div className="rounded-2xl border border-zinc-200/80 bg-white p-3.5 shadow-sm">
+        <QRCodeSVG value={value} size={size} level="M" bgColor="#ffffff" fgColor="#09090b" title={`Ticket ${value}`} />
       </div>
-      <figcaption className="mt-3 text-[10px] font-bold uppercase tracking-[0.18em] text-muted">Show at entry</figcaption>
+      <figcaption className="mt-3 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">Show at entry</figcaption>
     </figure>
   );
 }
@@ -37,19 +37,19 @@ export function icsHref(t: Ticket, ev: EventInfo) {
   return `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`;
 }
 
-/** Perforation with punched notches (notch colour must match the page behind the ticket). */
+/** Perforation with punched notches (notch colour matches the background page behind the ticket). */
 export function Perforation({ vertical }: { vertical?: boolean }) {
   return vertical ? (
-    <div className="relative w-8 shrink-0" aria-hidden>
-      <span className="absolute -top-4 left-0 size-8 rounded-full bg-bg" />
-      <span className="absolute inset-y-6 left-1/2 border-l-2 border-dashed border-line" />
-      <span className="absolute -bottom-4 left-0 size-8 rounded-full bg-bg" />
+    <div className="relative w-8 shrink-0 flex items-center justify-center select-none" aria-hidden>
+      <span className="absolute -top-4 left-1/2 -translate-x-1/2 size-8 rounded-full bg-[#fafafa] border border-zinc-200/80" />
+      <span className="h-full border-l-2 border-dashed border-zinc-200" />
+      <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 size-8 rounded-full bg-[#fafafa] border border-zinc-200/80" />
     </div>
   ) : (
-    <div className="relative h-8" aria-hidden>
-      <span className="absolute -left-4 top-0 size-8 rounded-full bg-bg" />
-      <span className="absolute inset-x-6 top-1/2 border-t-2 border-dashed border-line" />
-      <span className="absolute -right-4 top-0 size-8 rounded-full bg-bg" />
+    <div className="relative h-8 w-full flex items-center justify-center select-none" aria-hidden>
+      <span className="absolute -left-4 top-1/2 -translate-y-1/2 size-8 rounded-full bg-[#fafafa] border border-zinc-200/80" />
+      <span className="w-full border-t-2 border-dashed border-zinc-200" />
+      <span className="absolute -right-4 top-1/2 -translate-y-1/2 size-8 rounded-full bg-[#fafafa] border border-zinc-200/80" />
     </div>
   );
 }

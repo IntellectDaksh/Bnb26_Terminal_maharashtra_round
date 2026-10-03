@@ -19,53 +19,99 @@ import {
 } from "recharts";
 import { Card, cx } from "@/components/ui";
 
-/** Warm palette: fg slate = Protected Queue, chart-grey = FIFO, amber secondary, sage sparingly, danger only for blocked/bots. */
+/**
+ * Modern zinc + emerald palette:
+ * - Emerald (#059669, #10b981) for Protected Queue, successes and active highlights
+ * - Dark zinc (#18181b, #27272a) for contrast and neutral series
+ * - Muted zinc (#71717a, #a1a1aa) for FIFO baseline and axes
+ * - Danger (#ef4444) for blocked requests and malicious bots
+ */
 export const C = {
-  fg: "#33404b",
-  grey: "#c9bba8",
-  amber: "#e9b466",
-  beige: "#f6eee3",
-  success: "#5f8f70",
-  danger: "#ad4a43",
-  line: "#ecdfd0",
-  muted: "#6b7680",
-  surface: "#fffdf9",
+  emerald: "#059669",
+  emeraldLight: "#10b981",
+  emeraldDark: "#047857",
+  emeraldSoft: "#ecfdf5",
+  zinc950: "#09090b",
+  zinc900: "#18181b",
+  zinc800: "#27272a",
+  zinc700: "#3f3f46",
+  zinc500: "#71717a",
+  zinc400: "#a1a1aa",
+  zinc200: "#e4e4e7",
+  zinc100: "#f4f4f5",
+  fg: "#059669", // Protected Queue primary (emerald)
+  grey: "#71717a", // FIFO comparison / baseline (zinc-500)
+  amber: "#f59e0b",
+  success: "#059669",
+  danger: "#ef4444",
+  line: "#e4e4e7",
+  muted: "#71717a",
+  surface: "#ffffff",
 };
 
-const axis = { stroke: C.muted, tick: { fill: C.muted, fontSize: 12 }, tickLine: false, axisLine: { stroke: C.line } } as const;
+const axis = {
+  stroke: "#a1a1aa",
+  tick: { fill: "#71717a", fontSize: 11, fontWeight: 500 },
+  tickLine: false,
+  axisLine: { stroke: "#e4e4e7" },
+} as const;
+
 const tooltip = {
-  contentStyle: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 12, fontSize: 12, color: C.fg, boxShadow: "0 8px 24px -12px rgba(51,64,75,0.18)" },
-  labelStyle: { color: C.muted, marginBottom: 4 },
-  itemStyle: { fontVariantNumeric: "tabular-nums", color: C.fg },
-  cursor: { fill: "rgba(51,64,75,0.04)", stroke: C.line },
+  contentStyle: {
+    backgroundColor: "rgba(255, 255, 255, 0.90)",
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
+    border: "1px solid rgba(228, 228, 231, 0.9)",
+    borderRadius: "14px",
+    fontSize: "12px",
+    fontWeight: 500,
+    color: "#18181b",
+    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04)",
+    padding: "8px 14px",
+  },
+  labelStyle: { color: "#71717a", marginBottom: 4, fontWeight: 600, fontSize: "11px", letterSpacing: "0.02em" },
+  itemStyle: { fontVariantNumeric: "tabular-nums", color: "#18181b", padding: "2px 0" },
+  cursor: { fill: "rgba(24, 24, 27, 0.03)", stroke: "#e4e4e7" },
 } as const;
 
 export type Series = { key: string; name: string; color: string; dashed?: boolean };
 type Row = Record<string, string | number>;
 
-export function ChartCard({ title, subtitle, right, children, className }: { title: string; subtitle?: string; right?: ReactNode; children: ReactNode; className?: string }) {
+export function ChartCard({
+  title,
+  subtitle,
+  right,
+  children,
+  className,
+}: {
+  title: string;
+  subtitle?: string;
+  right?: ReactNode;
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <Card className={cx("min-w-0 p-6 sm:p-8", className)}>
+    <div className={cx("rounded-3xl border border-zinc-200/80 bg-white p-6 sm:p-8 shadow-sm transition-all", className)}>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="serif text-[22px] font-semibold leading-tight">{title}</h2>
-          {subtitle && <p className="mt-1 text-[13px] text-muted">{subtitle}</p>}
+          <h2 className="text-lg font-semibold tracking-tight text-zinc-900">{title}</h2>
+          {subtitle && <p className="mt-1 text-xs font-light text-zinc-500">{subtitle}</p>}
         </div>
         {right}
       </div>
       {children}
-    </Card>
+    </div>
   );
 }
 
 export function Legend({ items }: { items: { name: string; color: string; value?: ReactNode }[] }) {
   return (
-    <ul className="flex flex-wrap gap-x-5 gap-y-2 text-[13px] text-muted">
+    <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-zinc-500">
       {items.map((i) => (
         <li key={i.name} className="flex items-center gap-2">
-          <span className="size-2 rounded-full" style={{ background: i.color }} aria-hidden />
-          {i.name}
-          {i.value !== undefined && <span className="num font-medium text-fg">{i.value}</span>}
+          <span className="size-2 rounded-full shrink-0 shadow-sm" style={{ background: i.color }} aria-hidden />
+          <span className="text-zinc-600">{i.name}</span>
+          {i.value !== undefined && <span className="num font-semibold text-zinc-900">{i.value}</span>}
         </li>
       ))}
     </ul>
@@ -83,33 +129,80 @@ function Frame({ height, label, children }: { height: number; label: string; chi
   );
 }
 
-export function Lines({ data, x, series, height = 260, label, fmt }: { data: Row[]; x: string; series: Series[]; height?: number; label: string; fmt?: (v: number) => string }) {
+export function Lines({
+  data,
+  x,
+  series,
+  height = 260,
+  label,
+  fmt,
+}: {
+  data: Row[];
+  x: string;
+  series: Series[];
+  height?: number;
+  label: string;
+  fmt?: (v: number) => string;
+}) {
   const f = (v: unknown) => (fmt ? fmt(Number(v)) : Number(v).toLocaleString("en-US"));
   return (
     <Frame height={height} label={label}>
-      <LineChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
-        <CartesianGrid stroke={C.line} vertical={false} />
+      <LineChart data={data} margin={{ top: 6, right: 12, left: 0, bottom: 0 }}>
+        <CartesianGrid stroke={C.line} strokeDasharray="3 3" vertical={false} />
         <XAxis dataKey={x} {...axis} minTickGap={32} />
         <YAxis {...axis} width={48} tickFormatter={f} />
         <Tooltip {...tooltip} formatter={f} />
         {series.map((s) => (
-          <Line key={s.key} dataKey={s.key} name={s.name} stroke={s.color} strokeDasharray={s.dashed ? "4 4" : undefined} dot={false} strokeWidth={1.75} isAnimationActive={false} />
+          <Line
+            key={s.key}
+            dataKey={s.key}
+            name={s.name}
+            stroke={s.color}
+            strokeDasharray={s.dashed ? "4 4" : undefined}
+            dot={false}
+            strokeWidth={2}
+            isAnimationActive={false}
+          />
         ))}
       </LineChart>
     </Frame>
   );
 }
 
-export function Areas({ data, x, series, height = 240, label, stacked }: { data: Row[]; x: string; series: Series[]; height?: number; label: string; stacked?: boolean }) {
+export function Areas({
+  data,
+  x,
+  series,
+  height = 240,
+  label,
+  stacked,
+}: {
+  data: Row[];
+  x: string;
+  series: Series[];
+  height?: number;
+  label: string;
+  stacked?: boolean;
+}) {
   return (
     <Frame height={height} label={label}>
-      <AreaChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
-        <CartesianGrid stroke={C.line} vertical={false} />
+      <AreaChart data={data} margin={{ top: 6, right: 12, left: 0, bottom: 0 }}>
+        <CartesianGrid stroke={C.line} strokeDasharray="3 3" vertical={false} />
         <XAxis dataKey={x} {...axis} minTickGap={40} />
         <YAxis {...axis} width={48} />
         <Tooltip {...tooltip} formatter={(v) => Number(v).toLocaleString("en-US", { maximumFractionDigits: 1 })} />
         {series.map((s) => (
-          <Area key={s.key} dataKey={s.key} name={s.name} stackId={stacked ? "1" : undefined} stroke={s.color} fill={s.color} fillOpacity={0.12} strokeWidth={1.5} isAnimationActive={false} />
+          <Area
+            key={s.key}
+            dataKey={s.key}
+            name={s.name}
+            stackId={stacked ? "1" : undefined}
+            stroke={s.color}
+            fill={s.color}
+            fillOpacity={0.14}
+            strokeWidth={1.75}
+            isAnimationActive={false}
+          />
         ))}
       </AreaChart>
     </Frame>
@@ -138,12 +231,17 @@ export function Bars({
   const fmt = (v: unknown) => (percent ? `${+(Number(v) * 100).toFixed(Number(v) < 0.1 ? 1 : 0)}%` : Number(v).toLocaleString("en-US"));
   return (
     <Frame height={height} label={label}>
-      <BarChart data={data} layout={horizontal ? "vertical" : "horizontal"} margin={{ top: 4, right: 8, left: 0, bottom: 0 }} barGap={4}>
-        <CartesianGrid stroke={C.line} vertical={!!horizontal} horizontal={!horizontal} />
+      <BarChart
+        data={data}
+        layout={horizontal ? "vertical" : "horizontal"}
+        margin={{ top: 6, right: 12, left: 0, bottom: 0 }}
+        barGap={6}
+      >
+        <CartesianGrid stroke={C.line} strokeDasharray="3 3" vertical={!!horizontal} horizontal={!horizontal} />
         {horizontal ? (
           <>
             <XAxis type="number" {...axis} tickFormatter={fmt} />
-            <YAxis type="category" dataKey={x} {...axis} width={96} />
+            <YAxis type="category" dataKey={x} {...axis} width={100} />
           </>
         ) : (
           <>
@@ -153,14 +251,33 @@ export function Bars({
         )}
         <Tooltip {...tooltip} formatter={fmt} />
         {series.map((s) => (
-          <Bar key={s.key} dataKey={s.key} name={s.name} fill={s.color} stackId={stacked ? "1" : undefined} radius={4} maxBarSize={28} isAnimationActive={false} />
+          <Bar
+            key={s.key}
+            dataKey={s.key}
+            name={s.name}
+            fill={s.color}
+            stackId={stacked ? "1" : undefined}
+            radius={horizontal ? [0, 6, 6, 0] : [6, 6, 0, 0]}
+            maxBarSize={28}
+            isAnimationActive={false}
+          />
         ))}
       </BarChart>
     </Frame>
   );
 }
 
-export function Donut({ data, height = 200, label, center }: { data: { name: string; value: number; color: string }[]; height?: number; label: string; center?: ReactNode }) {
+export function Donut({
+  data,
+  height = 200,
+  label,
+  center,
+}: {
+  data: { name: string; value: number; color: string }[];
+  height?: number;
+  label: string;
+  center?: ReactNode;
+}) {
   const empty = data.every((d) => d.value <= 0);
   return (
     <div className="relative">
@@ -173,7 +290,7 @@ export function Donut({ data, height = 200, label, center }: { data: { name: str
             innerRadius="68%"
             outerRadius="92%"
             stroke={C.surface}
-            strokeWidth={2}
+            strokeWidth={3}
             isAnimationActive={false}
           >
             {(empty ? [{ color: C.line }] : data).map((d, i) => (
