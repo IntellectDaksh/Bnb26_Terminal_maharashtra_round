@@ -16,19 +16,20 @@ export const cx = (...c: (string | false | null | undefined)[]) => c.filter(Bool
 
 /* ---------- brand ---------- */
 
-/** Modern brand mark with signature emerald dot */
+/** Open circular mark, shared by public and admin screens. */
 export function LogoMark({ className = "size-5" }: { className?: string }) {
   return (
-    <span className={cx("relative inline-flex items-center justify-center", className)}>
-      <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 shadow-[0_0_8px_rgba(5,150,105,0.4)]"></span>
-    </span>
+    <svg viewBox="0 0 24 24" fill="none" className={cx("shrink-0", className)} aria-hidden>
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeOpacity="0.22" strokeWidth="2" />
+      <path d="M12 3a9 9 0 0 1 8.5 6M12 21a9 9 0 0 1-8.5-6" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" />
+    </svg>
   );
 }
 
 export function Wordmark({ className }: { className?: string }) {
   return (
-    <span className={cx("inline-flex items-center gap-2.5 text-sm font-semibold tracking-tight uppercase text-zinc-900", className)}>
-      <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 shadow-[0_0_8px_rgba(5,150,105,0.4)]"></span>
+    <span className={cx("inline-flex items-center gap-2.5 text-base font-semibold tracking-tight", className)}>
+      <LogoMark className="size-6" />
       Fair Drop
     </span>
   );
@@ -45,13 +46,13 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 export const buttonClass = (variant: ButtonProps["variant"] = "primary", size: ButtonProps["size"] = "md") =>
   cx(
     "inline-flex items-center justify-center gap-2 font-semibold transition-all duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 touch-manipulation select-none",
-    size === "sm" && "h-9 px-4 text-xs rounded-full",
-    size === "md" && "h-11 px-6 text-sm rounded-full",
-    size === "lg" && "h-13 px-8 text-sm md:text-base rounded-full",
-    variant === "primary" && "bg-emerald-600 text-white shadow-lg shadow-emerald-900/10 hover:bg-emerald-500",
-    variant === "secondary" && "border border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-50 hover:border-zinc-300 shadow-sm",
+    size === "sm" && "h-9 px-4 text-xs rounded-lg",
+    size === "md" && "h-11 px-6 text-sm rounded-xl",
+    size === "lg" && "h-13 px-7 text-sm rounded-xl",
+    variant === "primary" && "bg-zinc-900 text-white hover:bg-zinc-800",
+    variant === "secondary" && "border border-line bg-surface text-zinc-900 hover:bg-zinc-50 hover:border-zinc-300 shadow-sm",
     variant === "dark" && "bg-zinc-900 text-white hover:bg-zinc-800 shadow-sm",
-    variant === "soft" && "bg-emerald-50 text-emerald-700 hover:bg-emerald-100/80 border border-emerald-200/50",
+    variant === "soft" && "bg-bg-2 text-fg hover:bg-zinc-200 border border-line",
     variant === "ghost" && "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/60 rounded-xl",
     variant === "danger" && "border border-red-200 bg-red-50/50 text-red-600 hover:bg-red-50",
   );
@@ -86,7 +87,7 @@ export function Select({ label, id, children, className, ...rest }: SelectHTMLAt
     <label htmlFor={fid} className="block space-y-1.5">
       <span className="block text-xs font-medium text-zinc-600 ml-1">{label}</span>
       <span className="relative block">
-        <select id={fid} {...rest} className={cx("form-input appearance-none pr-10 bg-white", className)}>
+        <select id={fid} {...rest} className={cx("form-input appearance-none pr-10 bg-surface", className)}>
           {children}
         </select>
         <svg viewBox="0 0 16 16" className="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-zinc-400" aria-hidden>
@@ -100,7 +101,7 @@ export function Select({ label, id, children, className, ...rest }: SelectHTMLAt
 export function Checkbox({ label, ...rest }: InputHTMLAttributes<HTMLInputElement> & { label: ReactNode }) {
   return (
     <label className="flex cursor-pointer items-start gap-3 text-sm text-zinc-700">
-      <input type="checkbox" {...rest} className="mt-0.5 size-4.5 shrink-0 rounded cursor-pointer accent-emerald-600" />
+      <input type="checkbox" {...rest} className="mt-0.5 size-4.5 shrink-0 rounded cursor-pointer accent-zinc-900" />
       <span>{label}</span>
     </label>
   );
@@ -109,13 +110,23 @@ export function Checkbox({ label, ...rest }: InputHTMLAttributes<HTMLInputElemen
 /* ---------- display ---------- */
 
 export function Card({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
-  return <div {...rest} className={cx("rounded-3xl border border-zinc-200/80 bg-white shadow-sm", className)} />;
+  return <div {...rest} className={cx("rounded-xl border border-line bg-surface", className)} />;
 }
 
 export function Eyebrow({ children, className }: { children: ReactNode; className?: string }) {
   return <div className={cx("eyebrow", className)}>{children}</div>;
 }
 export const Label = Eyebrow;
+
+export function PageHeading({ title, eyebrow, description, className }: { title: ReactNode; eyebrow?: string; description?: ReactNode; className?: string }) {
+  return (
+    <header className={cx("max-w-3xl", className)}>
+      {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+      <h1 className="page-title mt-3">{title}</h1>
+      {description && <p className="page-description mt-4">{description}</p>}
+    </header>
+  );
+}
 
 export type Tone = "neutral" | "success" | "danger" | "live";
 
@@ -124,7 +135,7 @@ export function StatusBadge({ tone = "neutral", children, className }: { tone?: 
     <span
       className={cx(
         "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wider",
-        tone === "neutral" && "bg-zinc-100 text-zinc-600 border border-zinc-200/60",
+        tone === "neutral" && "bg-zinc-100 text-zinc-600 border border-line",
         (tone === "success" || tone === "live") && "bg-emerald-50 text-emerald-700 border border-emerald-200/70",
         tone === "danger" && "bg-red-50 text-red-600 border border-red-200/70",
         className,
@@ -139,10 +150,10 @@ export const Badge = StatusBadge;
 
 export function MetricCard({ label, value, sub, className }: { label: ReactNode; value: ReactNode; sub?: ReactNode; className?: string }) {
   return (
-    <div className={cx("min-w-0 p-5 rounded-2xl bg-zinc-50 border border-zinc-100", className)}>
+    <div className={cx("min-w-0 p-5 rounded-xl bg-surface border border-line", className)}>
       <div className="text-xs font-medium uppercase tracking-wider text-zinc-500">{label}</div>
       <div className="num mt-2 truncate text-3xl font-semibold tracking-tight text-zinc-900">{value}</div>
-      {sub && <div className="mt-1 truncate text-xs text-zinc-500 font-light">{sub}</div>}
+      {sub && <div className="mt-1 truncate text-xs text-zinc-500 font-normal">{sub}</div>}
     </div>
   );
 }
@@ -162,7 +173,7 @@ export function ProgressBar({ value, label, className, tone = "fg" }: { value: n
       <div
         className={cx(
           "h-full rounded-full transition-all duration-700 ease-out",
-          tone === "fg" && "bg-emerald-600",
+          tone === "fg" && "bg-zinc-900",
           tone === "success" && "bg-emerald-500",
           tone === "danger" && "bg-red-500",
         )}
@@ -229,8 +240,8 @@ export function Toast({ message, tone = "neutral", onClose }: { message: string 
       {message && (
         <div
           className={cx(
-            "rise pointer-events-auto rounded-full border bg-white px-5 py-3 text-sm font-medium shadow-xl",
-            tone === "danger" ? "border-red-200 text-red-600 bg-red-50/90" : tone === "success" ? "border-emerald-200 text-emerald-700 bg-emerald-50/90" : "border-zinc-200 text-zinc-800",
+            "rise pointer-events-auto rounded-full border bg-surface px-5 py-3 text-sm font-medium shadow-sm",
+            tone === "danger" ? "border-red-200 text-red-600 bg-red-50/90" : tone === "success" ? "border-emerald-200 text-emerald-700 bg-emerald-50/90" : "border-line text-zinc-800",
           )}
         >
           {message}
@@ -270,13 +281,13 @@ export function Dialog({
         role="alertdialog"
         aria-modal="true"
         aria-labelledby="dlg-title"
-        className="rise w-full max-w-sm rounded-3xl border border-zinc-200/80 bg-white p-7 shadow-2xl"
+        className="rise w-full max-w-sm rounded-xl border border-line bg-surface p-7 shadow-sm"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 id="dlg-title" className="text-xl font-semibold tracking-tight text-zinc-900">
           {title}
         </h2>
-        <div className="mt-2 text-sm leading-relaxed text-zinc-600 font-light">{body}</div>
+        <div className="mt-2 text-sm leading-relaxed text-zinc-600 font-normal">{body}</div>
         <div className="mt-6 flex justify-end gap-2">
           <Button variant="secondary" size="sm" onClick={onCancel} autoFocus>
             Cancel
@@ -294,7 +305,7 @@ export function ErrorState({ title, body, action }: { title: string; body: React
   return (
     <div className="mx-auto max-w-md py-12 text-center">
       <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">{title}</h1>
-      <p className="mt-3 text-sm text-zinc-500 font-light leading-relaxed">{body}</p>
+      <p className="mt-3 text-sm text-zinc-500 font-normal leading-relaxed">{body}</p>
       {action && <div className="mt-8 flex justify-center">{action}</div>}
     </div>
   );

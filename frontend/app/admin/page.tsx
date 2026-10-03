@@ -15,7 +15,6 @@ import {
   TableWrap,
   hhmm,
   int,
-  isLivePhase,
   ms,
   pct,
   td,
@@ -86,13 +85,13 @@ function DemoDashboard() {
       <section aria-label="Real-time telemetry" className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {!m ? (
           Array.from({ length: 4 }, (_, i) => (
-            <div key={i} className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm">
+            <div key={i} className="rounded-xl border border-line bg-surface p-5 shadow-sm">
               <Skeleton className="h-16" />
             </div>
           ))
         ) : (
           <>
-            <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm hover:border-zinc-300 transition-colors">
+            <div className="rounded-xl border border-line bg-surface p-5 shadow-sm hover:border-zinc-300 transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Request Rate</span>
                 <span className="inline-flex size-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -100,14 +99,14 @@ function DemoDashboard() {
               <div className="num mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
                 {int(m.rps)} <span className="text-sm font-normal text-zinc-500">req/s</span>
               </div>
-              <div className="mt-1 flex items-center gap-1.5 text-xs text-zinc-500 font-light truncate">
+              <div className="mt-1 flex items-center gap-1.5 text-xs text-zinc-500 font-normal truncate">
                 <span className="text-emerald-600 font-medium">{int(humanRps)} human</span> ·{" "}
                 <span className="text-zinc-500">{int(suspicious)} susp</span> ·{" "}
                 <span className="text-red-600 font-medium">{int(m.blocked_rps)} block</span>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm hover:border-zinc-300 transition-colors">
+            <div className="rounded-xl border border-line bg-surface p-5 shadow-sm hover:border-zinc-300 transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Active Sessions</span>
                 <span className="text-[10px] font-semibold text-zinc-400">Live</span>
@@ -115,7 +114,7 @@ function DemoDashboard() {
               <div className="num mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
                 {int(m.active_sessions)}
               </div>
-              <div className="mt-1 text-xs text-zinc-500 font-light">
+              <div className="mt-1 text-xs text-zinc-500 font-normal">
                 {m.flagged_sessions > 0 ? (
                   <span className="text-amber-600 font-medium">{int(m.flagged_sessions)} flagged suspicious</span>
                 ) : (
@@ -124,7 +123,7 @@ function DemoDashboard() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm hover:border-zinc-300 transition-colors">
+            <div className="rounded-xl border border-line bg-surface p-5 shadow-sm hover:border-zinc-300 transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Latency p50 / p95 / p99</span>
                 <span className="text-[10px] font-semibold text-zinc-400">Edge</span>
@@ -132,13 +131,13 @@ function DemoDashboard() {
               <div className="num mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
                 {ms(m.latency_p50)}
               </div>
-              <div className="mt-1 text-xs text-zinc-500 font-light">
+              <div className="mt-1 text-xs text-zinc-500 font-normal">
                 p95: <span className="font-medium text-zinc-700">{ms(m.latency_p95)}</span> · p99:{" "}
                 <span className="font-medium text-zinc-700">{ms(m.latency_p99)}</span>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm hover:border-zinc-300 transition-colors">
+            <div className="rounded-xl border border-line bg-surface p-5 shadow-sm hover:border-zinc-300 transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Error Rate &amp; Limits</span>
                 <span className={m.error_rate > 0.01 ? "size-2 rounded-full bg-red-500" : "size-2 rounded-full bg-emerald-500"} />
@@ -146,7 +145,7 @@ function DemoDashboard() {
               <div className="num mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
                 {pct(m.error_rate, 2)}
               </div>
-              <div className="mt-1 text-xs text-zinc-500 font-light">
+              <div className="mt-1 text-xs text-zinc-500 font-normal">
                 Rate limited: <span className="font-medium text-zinc-700">{int(m.rate_limited)}</span> requests
               </div>
             </div>
@@ -157,7 +156,7 @@ function DemoDashboard() {
       {/* Seat capacity & integrity ribbon */}
       <div className="grid gap-4 lg:grid-cols-4">
         {!m || !e ? (
-          <div className="col-span-full rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm">
+          <div className="col-span-full rounded-xl border border-line bg-surface p-5 shadow-sm">
             <Skeleton className="h-10" />
           </div>
         ) : (
@@ -177,12 +176,12 @@ function DemoDashboard() {
               value={int(Math.max(0, e.registrations - m.seats_confirmed - m.seats_reserved - m.reservations_expired))}
               sub={`${int(e.registrations)} total registrations`}
             />
-            <div className="flex flex-col justify-between rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm">
+            <div className="flex flex-col justify-between rounded-xl border border-line bg-surface p-5 shadow-sm">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Database Integrity</span>
               <div className="my-2">
                 <IntegrityLine duplicates={m.duplicate_allocations} oversold={m.oversold} />
               </div>
-              <span className="text-[11px] text-zinc-400 font-light">Zero over-allocation invariant active</span>
+              <span className="text-[11px] text-zinc-400 font-normal">Zero over-allocation invariant active</span>
             </div>
           </>
         )}
@@ -198,7 +197,7 @@ function DemoDashboard() {
           right={
             <Legend
               items={[
-                { name: "Protected Queue", color: C.emerald },
+                { name: "Protected Queue", color: C.fg },
                 { name: "Unprotected (FIFO)", color: C.grey },
               ]}
             />
@@ -210,7 +209,7 @@ function DemoDashboard() {
               x="t"
               label="Cumulative seats allocated per time bucket, protected queue versus FIFO"
               series={[
-                { key: "protected", name: "Protected Queue", color: C.emerald },
+                { key: "protected", name: "Protected Queue", color: C.fg },
                 { key: "fifo", name: "Unprotected (FIFO)", color: C.grey, dashed: true },
               ]}
             />
@@ -306,7 +305,7 @@ function DemoDashboard() {
             <TableWrap>
               <table className="w-full min-w-[500px]">
                 <thead>
-                  <tr className="border-b border-zinc-200/80 bg-zinc-50/75">
+                  <tr className="border-b border-line bg-zinc-50/75">
                     <th className="px-5 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Time</th>
                     <th className="px-5 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Event</th>
                     <th className="px-5 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Detail</th>

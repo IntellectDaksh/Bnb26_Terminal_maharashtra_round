@@ -52,17 +52,17 @@ function exportPng(c: Comparison) {
   const font = "Inter, -apple-system, sans-serif";
 
   // Modern clean background
-  g.fillStyle = "#ffffff";
+  g.fillStyle = "#faf8f3";
   g.fillRect(0, 0, 1200, 640);
 
   // Top header
-  g.fillStyle = "#059669";
+  g.fillStyle = "#171816";
   g.fillRect(64, 50, 4, 28);
-  g.fillStyle = "#18181b";
+  g.fillStyle = "#171816";
   g.font = `600 28px ${font}`;
   g.fillText("Queue Fairness Benchmark", 76, 73);
 
-  g.fillStyle = "#71717a";
+  g.fillStyle = "#75736c";
   g.font = `400 15px ${font}`;
   g.fillText(
     `Simulated load: ${int(c.params.humans)} humans, ${int(c.params.bots)} bots @ ${c.params.bot_rps} req/s · ${int(c.params.seats)} available seats`,
@@ -71,29 +71,29 @@ function exportPng(c: Comparison) {
   );
 
   // Divider
-  g.fillStyle = "#e4e4e7";
+  g.fillStyle = "#ded9cf";
   g.fillRect(64, 135, 1072, 1);
   g.fillRect(600, 165, 1, 400);
 
   // Columns
   [
-    { s: c.protected, title: "PROTECTED QUEUE (FAIR DROP)", color: "#059669" },
-    { s: c.fifo, title: "TRADITIONAL FIFO QUEUE", color: "#71717a" },
+    { s: c.protected, title: "PROTECTED QUEUE (FAIR DROP)", color: "#171816" },
+    { s: c.fifo, title: "TRADITIONAL FIFO QUEUE", color: "#75736c" },
   ].forEach(({ s, title, color }, i) => {
     const x = 64 + i * 576;
     g.fillStyle = color;
     g.font = `600 13px ${font}`;
     g.fillText(title, x, 185);
 
-    g.fillStyle = color === "#059669" ? "#059669" : "#dc2626";
+    g.fillStyle = color === "#171816" ? "#171816" : "#dc2626";
     g.font = `700 84px ${font}`;
     g.fillText(pct(s.bot_seat_share, 0), x, 275);
 
-    g.fillStyle = "#18181b";
+    g.fillStyle = "#171816";
     g.font = `500 16px ${font}`;
     g.fillText("of seats captured by bots", x, 310);
 
-    g.fillStyle = "#71717a";
+    g.fillStyle = "#75736c";
     g.font = `400 15px ${font}`;
     g.fillText(`Human seat share: ${pct(s.human_seat_share, 1)}`, x, 350);
     g.fillText(`Jain's Fairness Index: ${s.jain_index.toFixed(3)} / 1.000`, x, 380);
@@ -102,7 +102,7 @@ function exportPng(c: Comparison) {
   });
 
   // Footer
-  g.fillStyle = "#e4e4e7";
+  g.fillStyle = "#ded9cf";
   g.fillRect(64, 580, 1072, 1);
   g.fillStyle = "#a1a1aa";
   g.font = `400 13px ${font}`;
@@ -120,14 +120,14 @@ function JainGauge({ value, label, subtitle, isProtected }: { value: number; lab
   const strokeDashoffset = circumference * (1 - clamped);
 
   return (
-    <div className="flex flex-col items-center rounded-2xl border border-zinc-200/80 bg-zinc-50/60 p-5 text-center">
+    <div className="flex flex-col items-center rounded-xl border border-line bg-zinc-50/60 p-5 text-center">
       <div className="relative h-24 w-44">
         <svg viewBox="0 0 100 58" className="w-full overflow-visible">
           {/* Background Arc */}
           <path
             d="M 12 48 A 38 38 0 0 1 88 48"
             fill="none"
-            stroke="#e4e4e7"
+            stroke="#ded9cf"
             strokeWidth="9"
             strokeLinecap="round"
           />
@@ -135,7 +135,7 @@ function JainGauge({ value, label, subtitle, isProtected }: { value: number; lab
           <path
             d="M 12 48 A 38 38 0 0 1 88 48"
             fill="none"
-            stroke={isProtected ? "#059669" : "#a1a1aa"}
+            stroke={isProtected ? "#171816" : "#a1a1aa"}
             strokeWidth="9"
             strokeLinecap="round"
             strokeDasharray={circumference}
@@ -144,7 +144,7 @@ function JainGauge({ value, label, subtitle, isProtected }: { value: number; lab
           />
         </svg>
         <div className="absolute inset-x-0 bottom-1 flex flex-col items-center">
-          <span className={cx("num text-2xl font-bold tracking-tight", isProtected ? "text-emerald-700" : "text-zinc-700")}>
+          <span className={cx("num text-2xl font-semibold tracking-tight", isProtected ? "text-emerald-700" : "text-zinc-700")}>
             {value.toFixed(3)}
           </span>
           <span className="text-[10px] uppercase font-semibold tracking-wider text-zinc-400">Score</span>
@@ -152,7 +152,7 @@ function JainGauge({ value, label, subtitle, isProtected }: { value: number; lab
       </div>
       <div className="mt-2">
         <div className="text-xs font-semibold text-zinc-900">{label}</div>
-        <div className="text-[11px] text-zinc-500 font-light">{subtitle}</div>
+        <div className="text-[11px] text-zinc-500 font-normal">{subtitle}</div>
       </div>
     </div>
   );
@@ -169,7 +169,7 @@ function StrategyColumn({ title, s, isProtected }: { title: string; s: StrategyR
         <span
           className={cx(
             "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold",
-            isProtected ? "bg-emerald-50 text-emerald-700 border border-emerald-200/80" : "bg-zinc-100 text-zinc-600 border border-zinc-200"
+            isProtected ? "bg-emerald-50 text-emerald-700 border border-emerald-200/80" : "bg-zinc-100 text-zinc-600 border border-line"
           )}
         >
           <span className="size-1.5 rounded-full" style={{ background: accentColor }} />
@@ -179,37 +179,37 @@ function StrategyColumn({ title, s, isProtected }: { title: string; s: StrategyR
     >
       {/* Metric Cards Grid */}
       <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="rounded-2xl border border-zinc-100 bg-zinc-50/70 p-4">
+        <div className="rounded-xl border border-zinc-100 bg-zinc-50/70 p-4">
           <dt className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Bot Seat Share</dt>
-          <dd className={cx("num mt-1 text-2xl font-bold", isProtected ? "text-emerald-700" : "text-red-600")}>
+          <dd className={cx("num mt-1 text-2xl font-semibold", isProtected ? "text-emerald-700" : "text-red-600")}>
             {pct(s.bot_seat_share)}
           </dd>
         </div>
 
-        <div className="rounded-2xl border border-zinc-100 bg-zinc-50/70 p-4">
+        <div className="rounded-xl border border-zinc-100 bg-zinc-50/70 p-4">
           <dt className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Human Seat Share</dt>
-          <dd className="num mt-1 text-2xl font-bold text-zinc-900">
+          <dd className="num mt-1 text-2xl font-semibold text-zinc-900">
             {pct(s.human_seat_share)}
           </dd>
         </div>
 
-        <div className="rounded-2xl border border-zinc-100 bg-zinc-50/70 p-4">
+        <div className="rounded-xl border border-zinc-100 bg-zinc-50/70 p-4">
           <dt className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">p50 Allocation</dt>
-          <dd className="num mt-1 text-2xl font-bold text-zinc-900">
+          <dd className="num mt-1 text-2xl font-semibold text-zinc-900">
             {ms(s.time_to_allocation_ms.p50)}
           </dd>
         </div>
 
-        <div className="rounded-2xl border border-zinc-100 bg-zinc-50/70 p-4">
+        <div className="rounded-xl border border-zinc-100 bg-zinc-50/70 p-4">
           <dt className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">p95 Allocation</dt>
-          <dd className="num mt-1 text-2xl font-bold text-zinc-900">
+          <dd className="num mt-1 text-2xl font-semibold text-zinc-900">
             {ms(s.time_to_allocation_ms.p95)}
           </dd>
         </div>
       </dl>
 
       {/* Speed cohort win rate bars */}
-      <div className="mt-6 rounded-2xl border border-zinc-100 bg-zinc-50/40 p-5">
+      <div className="mt-6 rounded-xl border border-zinc-100 bg-zinc-50/40 p-5">
         <div className="mb-3 flex items-center justify-between">
           <span className="text-xs font-semibold uppercase tracking-wider text-zinc-600">Cohort Win Rate (Slow vs Avg vs Fast vs Bots)</span>
           <span className="text-[11px] text-zinc-400">Target: Equal human probability</span>
@@ -225,7 +225,7 @@ function StrategyColumn({ title, s, isProtected }: { title: string; s: StrategyR
       </div>
 
       {/* Time-to-allocation histogram */}
-      <div className="mt-6 rounded-2xl border border-zinc-100 bg-zinc-50/40 p-5">
+      <div className="mt-6 rounded-xl border border-zinc-100 bg-zinc-50/40 p-5">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <span className="text-xs font-semibold uppercase tracking-wider text-zinc-600">Time-to-Allocation Histogram</span>
           <Legend items={[{ name: "Humans", color: C.emerald }, { name: "Bots", color: C.danger }]} />
@@ -372,13 +372,13 @@ export default function QueuePage() {
       ) : (
         <div className={cx("space-y-6 transition-opacity", busy && "opacity-60")} aria-busy={busy}>
           {/* Jain's Fairness Index Section */}
-          <div className="rounded-3xl border border-zinc-200/80 bg-white p-6 sm:p-8 shadow-sm">
+          <div className="rounded-xl border border-line bg-surface p-6 sm:p-8 shadow-sm">
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 className="text-lg font-semibold tracking-tight text-zinc-900">
                   Jain&apos;s Fairness Index Comparison
                 </h2>
-                <p className="mt-1 text-xs text-zinc-500 font-light">
+                <p className="mt-1 text-xs text-zinc-500 font-normal">
                   Mathematical metric (0 to 1.0) evaluating equal opportunity across participants regardless of network speed or automation.
                 </p>
               </div>
@@ -417,14 +417,14 @@ export default function QueuePage() {
             <TableWrap>
               <table className="w-full min-w-[640px]">
                 <thead>
-                  <tr className="border-b border-zinc-200/80 bg-zinc-50/75">
+                  <tr className="border-b border-line bg-zinc-50/75">
                     <th className={th}>Condition</th>
                     <th className={`${th} text-right`}>Bots</th>
                     <th className={`${th} text-right`}>Req/s per Bot</th>
                     <th className={`${th} text-right text-zinc-500`}>FIFO Bot Share</th>
-                    <th className={`${th} text-right text-emerald-700 font-bold`}>Protected Bot Share</th>
+                    <th className={`${th} text-right text-emerald-700 font-semibold`}>Protected Bot Share</th>
                     <th className={`${th} text-right text-zinc-500`}>FIFO Jain</th>
-                    <th className={`${th} text-right text-emerald-700 font-bold`}>Protected Jain</th>
+                    <th className={`${th} text-right text-emerald-700 font-semibold`}>Protected Jain</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -434,11 +434,11 @@ export default function QueuePage() {
                       <td className={`${td} num text-right text-zinc-700`}>{int(r.bots)}</td>
                       <td className={`${td} num text-right text-zinc-700`}>{r.bot_rps}</td>
                       <td className={`${td} num text-right text-red-600 font-medium`}>{pct(r.fifo_bot_share)}</td>
-                      <td className={`${td} num text-right text-emerald-600 font-bold`}>
+                      <td className={`${td} num text-right text-emerald-600 font-semibold`}>
                         {pct(r.protected_bot_share)}
                       </td>
                       <td className={`${td} num text-right text-zinc-500 font-mono`}>{r.fifo_jain.toFixed(3)}</td>
-                      <td className={`${td} num text-right text-emerald-600 font-bold font-mono`}>
+                      <td className={`${td} num text-right text-emerald-600 font-semibold font-mono`}>
                         {r.protected_jain.toFixed(3)}
                       </td>
                     </tr>

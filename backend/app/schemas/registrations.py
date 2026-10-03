@@ -10,6 +10,7 @@ from app.schemas.reservations import ReservationResponse
 class RegisterRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     security_token: str = Field(min_length=1, max_length=8192)
+    device_fp: str | None = Field(default=None, min_length=8, max_length=128)
 
 
 class RegistrationResponse(BaseModel):

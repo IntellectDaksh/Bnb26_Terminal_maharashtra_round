@@ -15,10 +15,16 @@ async def register(
     event_id: UUID, body: RegisterRequest, request: Request, user: AuthenticatedUser, db: DB
 ) -> RegisterResponse:
     # External network I/O must finish before starting the database transaction.
+    await request.app.state.abuse.limit(user.id, "register")
     decision = await request.app.state.security.verify(body.security_token, user.id, event_id)
+    if decision.allowed:
+        await request.app.state.abuse.registration(request, user.id, event_id, body.device_fp)
     return await register_user(event_id, user.id, decision, db)
 
 
 @router.get("/{event_id}/me", response_model=QueueStatus)
-async def my_status(event_id: UUID, user: AuthenticatedUser, db: DB) -> QueueStatus:
+async def my_status(
+    event_id: UUID, request: Request, user: AuthenticatedUser, db: DB
+) -> QueueStatus:
+    await request.app.state.abuse.limit(user.id, "me")
     return await get_queue_status(event_id, user.id, db)

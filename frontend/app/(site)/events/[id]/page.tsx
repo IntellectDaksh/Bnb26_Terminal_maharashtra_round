@@ -37,7 +37,7 @@ const TIMELINE: { phases: Phase[]; title: string; subtitle: string; body: string
 ];
 
 function Cta({ me, event, eventId }: { me?: Me; event: EventInfo; eventId: string }) {
-  const primaryBtn = cx(buttonClass("primary", "lg"), "w-full shadow-lg shadow-emerald-900/15");
+  const primaryBtn = cx(buttonClass("primary", "lg"), "w-full shadow-sm ");
   if (!me) return <Skeleton className="h-13 w-full rounded-full" />;
 
   if (me.status !== "NOT_REGISTERED") {
@@ -66,7 +66,7 @@ function Cta({ me, event, eventId }: { me?: Me; event: EventInfo; eventId: strin
     <span
       className={cx(
         buttonClass("secondary", "lg"),
-        "w-full cursor-not-allowed bg-zinc-100 text-zinc-400 border-zinc-200 shadow-none",
+        "w-full cursor-not-allowed bg-zinc-100 text-zinc-400 border-line shadow-none",
       )}
       aria-disabled
     >
@@ -84,18 +84,18 @@ export default function EventDetail() {
   const isAdmitting = e.phase === "ADMITTING";
 
   return (
-    <PageShell className="pt-8 sm:pt-12">
+    <PageShell>
       {/* Top Navigation */}
       <div className="mb-6">
         <BackLink href="/events">All drops</BackLink>
       </div>
 
       {/* Two-Column Split Layout */}
-      <div className="grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:gap-14 items-start">
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.5fr_1fr] lg:gap-14 items-start">
         {/* Left Column: Event Artwork, Narrative, Guarantees & Schedule */}
         <div className="min-w-0 space-y-12">
           {/* Hero Artwork with Category & Status Overlays */}
-          <div className="relative overflow-hidden rounded-[32px] border border-zinc-200/80 bg-zinc-100 shadow-sm">
+          <div className="relative overflow-hidden rounded-xl border border-line bg-zinc-100 shadow-sm">
             <EventArt category={e.category} className="aspect-[16/10] w-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/70 via-transparent to-transparent pointer-events-none" />
 
@@ -109,7 +109,7 @@ export default function EventDetail() {
             </div>
 
             <div className="absolute bottom-5 left-5 right-5 flex items-baseline justify-between text-white">
-              <span className="text-sm font-light text-zinc-200">
+              <span className="text-sm font-normal text-zinc-200">
                 {e.venue} · {e.city}
               </span>
               <span className="text-sm font-semibold uppercase tracking-wider text-emerald-400">
@@ -123,37 +123,37 @@ export default function EventDetail() {
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-600">
               <span>Organized by {e.organizer}</span>
             </div>
-            <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-5xl lg:text-6xl leading-[1.08]">
+            <h1 className="page-title mt-3">
               {e.name}
             </h1>
-            <p className="mt-3 text-xl font-light italic text-zinc-600 sm:text-2xl">
+            <p className="mt-3 text-xl font-normal italic text-zinc-600 sm:text-2xl">
               {e.tagline}
             </p>
-            <p className="mt-6 text-base font-light leading-relaxed text-zinc-700 sm:text-lg">
+            <p className="mt-6 text-base font-normal leading-relaxed text-zinc-700 sm:text-lg">
               {e.description}
             </p>
           </div>
 
           {/* Event Schedule & Venue Information */}
-          <div className="rounded-3xl border border-zinc-200/80 bg-white p-7 shadow-sm space-y-6">
-            <h2 className="text-xl font-bold text-zinc-900">Event Schedule &amp; Details</h2>
+          <div className="rounded-xl border border-line bg-surface p-7 shadow-sm space-y-6">
+            <h2 className="text-xl font-semibold text-zinc-900">Event Schedule &amp; Details</h2>
             <div className="grid gap-6 sm:grid-cols-2 text-sm">
-              <div className="space-y-1 rounded-2xl bg-zinc-50 p-4 border border-zinc-100">
+              <div className="space-y-1 rounded-xl bg-zinc-50 p-4 border border-zinc-100">
                 <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Date</span>
                 <p className="text-base font-semibold text-zinc-900">{fmtDateLong(e.starts_at)}</p>
               </div>
-              <div className="space-y-1 rounded-2xl bg-zinc-50 p-4 border border-zinc-100">
+              <div className="space-y-1 rounded-xl bg-zinc-50 p-4 border border-zinc-100">
                 <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Timing</span>
                 <p className="text-base font-semibold text-zinc-900">
                   {fmtTime(e.starts_at)} – {fmtTime(e.ends_at)} IST
                 </p>
               </div>
-              <div className="space-y-1 rounded-2xl bg-zinc-50 p-4 border border-zinc-100">
+              <div className="space-y-1 rounded-xl bg-zinc-50 p-4 border border-zinc-100">
                 <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Venue</span>
                 <p className="text-base font-semibold text-zinc-900">{e.venue}</p>
-                <p className="text-xs text-zinc-500 font-light">{e.city}</p>
+                <p className="text-xs text-zinc-500 font-normal">{e.city}</p>
               </div>
-              <div className="space-y-1 rounded-2xl bg-zinc-50 p-4 border border-zinc-100">
+              <div className="space-y-1 rounded-xl bg-zinc-50 p-4 border border-zinc-100">
                 <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Organizer</span>
                 <p className="text-base font-semibold text-zinc-900">{e.organizer}</p>
                 <p className="text-xs text-emerald-600 font-medium">Verified Partner</p>
@@ -164,7 +164,7 @@ export default function EventDetail() {
           {/* Drop Timeline */}
           <section aria-labelledby="timeline-heading" className="space-y-6">
             <div className="flex items-center justify-between">
-              <h2 id="timeline-heading" className="text-xl font-bold text-zinc-900">
+              <h2 id="timeline-heading" className="text-xl font-semibold text-zinc-900">
                 How this drop runs
               </h2>
               <span className="text-xs font-medium text-emerald-600 uppercase tracking-wider">
@@ -181,21 +181,21 @@ export default function EventDetail() {
                     key={t.title}
                     aria-current={isActive ? "step" : undefined}
                     className={cx(
-                      "rounded-2xl border p-5 transition-all duration-200",
+                      "rounded-xl border p-5 transition-all duration-200",
                       isActive
-                        ? "border-emerald-500/60 bg-emerald-50/30 shadow-md shadow-emerald-950/5 ring-1 ring-emerald-500/20"
-                        : "border-zinc-200/80 bg-white shadow-sm",
+                        ? "border-emerald-500/60 bg-emerald-50/30 shadow-sm  ring-1 ring-emerald-500/20"
+                        : "border-line bg-surface shadow-sm",
                       isPast && "opacity-75 bg-zinc-50/60",
                     )}
                   >
                     <div className="flex items-center justify-between">
                       <span
                         className={cx(
-                          "grid size-7 place-items-center rounded-full text-xs font-bold",
+                          "grid size-7 place-items-center rounded-full text-xs font-semibold",
                           isPast
                             ? "bg-emerald-100 text-emerald-700"
                             : isActive
-                              ? "bg-emerald-600 text-white shadow-sm"
+                              ? "bg-zinc-900 text-white shadow-sm"
                               : "bg-zinc-100 text-zinc-500",
                         )}
                       >
@@ -208,9 +208,9 @@ export default function EventDetail() {
                         </span>
                       )}
                     </div>
-                    <div className="mt-3 text-base font-bold text-zinc-900">{t.title}</div>
+                    <div className="mt-3 text-base font-semibold text-zinc-900">{t.title}</div>
                     <div className="text-xs font-semibold uppercase tracking-wider text-emerald-600">{t.subtitle}</div>
-                    <p className="mt-2 text-xs font-light leading-relaxed text-zinc-600">{t.body}</p>
+                    <p className="mt-2 text-xs font-normal leading-relaxed text-zinc-600">{t.body}</p>
                   </li>
                 );
               })}
@@ -218,36 +218,36 @@ export default function EventDetail() {
           </section>
 
           {/* Anti-Bot Fairness Guarantees */}
-          <div className="rounded-3xl border border-zinc-200/80 bg-zinc-900 text-white p-7 shadow-lg space-y-5 relative overflow-hidden">
+          <div className="rounded-xl border border-line bg-zinc-900 text-white p-7 shadow-sm space-y-5 relative overflow-hidden">
             <div className="pointer-events-none absolute -top-20 -right-20 size-60 rounded-full bg-emerald-500/10 blur-3xl" />
             <div className="relative">
               <span className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Fairness Architecture</span>
-              <h3 className="mt-1 text-xl font-bold text-white">Bot Protection &amp; Queue Rules</h3>
-              <p className="mt-2 text-xs text-zinc-300 font-light leading-relaxed">
+              <h3 className="mt-1 text-xl font-semibold text-white">Bot Protection &amp; Queue Rules</h3>
+              <p className="mt-2 text-xs text-zinc-300 font-normal leading-relaxed">
                 Every ticket sold on Fair Drop is defended by our multi-layer bot mitigation engine.
               </p>
             </div>
-            <div className="relative grid gap-4 sm:grid-cols-2 text-xs font-light text-zinc-300 pt-2">
+            <div className="relative grid gap-4 sm:grid-cols-2 text-xs font-normal text-zinc-300 pt-2">
               <div className="flex items-start gap-3">
-                <span className="grid size-5 shrink-0 place-items-center rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px]">✓</span>
+                <span className="grid size-5 shrink-0 place-items-center rounded-full bg-emerald-500/20 text-emerald-400 font-semibold text-[10px]">✓</span>
                 <div>
                   <strong className="text-white font-medium">1 Person = 1 Seat:</strong> Strictly one ticket allocation per verified human profile.
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <span className="grid size-5 shrink-0 place-items-center rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px]">✓</span>
+                <span className="grid size-5 shrink-0 place-items-center rounded-full bg-emerald-500/20 text-emerald-400 font-semibold text-[10px]">✓</span>
                 <div>
                   <strong className="text-white font-medium">5-Minute Window:</strong> Once admitted, your seat is reserved for 300 seconds.
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <span className="grid size-5 shrink-0 place-items-center rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px]">✓</span>
+                <span className="grid size-5 shrink-0 place-items-center rounded-full bg-emerald-500/20 text-emerald-400 font-semibold text-[10px]">✓</span>
                 <div>
                   <strong className="text-white font-medium">Zero Speed Edge:</strong> Register early or late in the pool — lottery odds are identical.
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <span className="grid size-5 shrink-0 place-items-center rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px]">✓</span>
+                <span className="grid size-5 shrink-0 place-items-center rounded-full bg-emerald-500/20 text-emerald-400 font-semibold text-[10px]">✓</span>
                 <div>
                   <strong className="text-white font-medium">Tamper-Proof Seeds:</strong> Cryptographic shuffle seed is audited and immutable.
                 </div>
@@ -258,14 +258,14 @@ export default function EventDetail() {
 
         {/* Right Column: Sticky Booking Glass Card */}
         <aside className="lg:pt-2">
-          <div className="sticky top-28 rounded-3xl border border-zinc-200/80 glass-panel p-7 shadow-xl shadow-zinc-900/5 backdrop-blur-xl">
+          <div className="sticky top-28 rounded-xl border border-line glass-panel p-7 shadow-sm shadow-zinc-900/5 backdrop-blur-xl">
             {/* Price Header */}
             <div className="flex items-baseline justify-between">
               <div>
-                <span className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900">
+                <span className="text-3xl sm:text-4xl font-semibold tracking-tight text-zinc-900">
                   {fmtPrice(e.price_inr)}
                 </span>
-                <span className="ml-2 text-xs text-zinc-500 font-light">INR</span>
+                <span className="ml-2 text-xs text-zinc-500 font-normal">INR</span>
               </div>
               <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-600">
                 1 per person
@@ -273,7 +273,7 @@ export default function EventDetail() {
             </div>
 
             {/* Capacity & Allocation Meters */}
-            <div className="mt-7 space-y-3 border-t border-zinc-200/70 pt-6">
+            <div className="mt-7 space-y-3 border-t border-line pt-6">
               <div className="flex justify-between text-xs text-zinc-600">
                 <span>Seats confirmed</span>
                 <span className="num font-semibold text-zinc-900">
@@ -286,7 +286,7 @@ export default function EventDetail() {
                 tone="success"
                 className="h-2.5"
               />
-              <div className="flex justify-between text-xs font-light text-zinc-500">
+              <div className="flex justify-between text-xs font-normal text-zinc-500">
                 <span>
                   <strong className="font-semibold text-zinc-800">{fmtNum(seatsLeft(e))}</strong> remaining
                 </span>
@@ -300,27 +300,27 @@ export default function EventDetail() {
             </div>
 
             {/* Key Event Attributes */}
-            <dl className="mt-6 space-y-3.5 border-t border-zinc-200/70 pt-6 text-sm">
+            <dl className="mt-6 space-y-3.5 border-t border-line pt-6 text-sm">
               <div className="flex justify-between gap-4">
-                <dt className="text-zinc-500 font-light">Status</dt>
+                <dt className="text-zinc-500 font-normal">Status</dt>
                 <dd>
                   <StatusBadge tone={phase.tone}>{phase.label}</StatusBadge>
                 </dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-zinc-500 font-light">In the pool</dt>
+                <dt className="text-zinc-500 font-normal">In the pool</dt>
                 <dd className="num font-semibold text-zinc-900">{fmtNum(e.registrations)} verified</dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-zinc-500 font-light">Date</dt>
+                <dt className="text-zinc-500 font-normal">Date</dt>
                 <dd className="font-medium text-zinc-900 text-right">{fmtDateLong(e.starts_at)}</dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-zinc-500 font-light">Time</dt>
+                <dt className="text-zinc-500 font-normal">Time</dt>
                 <dd className="font-medium text-zinc-900">{fmtTime(e.starts_at)} IST</dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-zinc-500 font-light">Checkout window</dt>
+                <dt className="text-zinc-500 font-normal">Checkout window</dt>
                 <dd className="font-medium text-emerald-600">5 minutes</dd>
               </div>
             </dl>
@@ -331,7 +331,7 @@ export default function EventDetail() {
             </div>
 
             {/* Phase Explanatory Note */}
-            <p className="mt-4 text-center text-xs font-light leading-relaxed text-zinc-500">
+            <p className="mt-4 text-center text-xs font-normal leading-relaxed text-zinc-500">
               {phase.line}
             </p>
           </div>

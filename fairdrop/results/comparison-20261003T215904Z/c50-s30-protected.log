@@ -1,0 +1,21 @@
+Mixed traffic complete: 5188 requests in 39.02s
+Report: C:\Users\royan\Programming\Hackathons\Build n buits hackathon\fairdrop\results\local-20261003T220335Z\report.html
+{
+  "verdict": "Redis rate and device/network protection",
+  "bot_request_block_pct": 90.46,
+  "database_checks": {
+    "tickets_by_role": {
+      "legit": 192,
+      "multi": 3,
+      "dup": 4,
+      "flood": 1
+    },
+    "registration_rows": 1040,
+    "human_rows": 1000,
+    "invalid_challenge_bot_rows": 0,
+    "unauthenticated_bot_rows": 0,
+    "duplicate_bot_rows": 10,
+    "capacity": 200,
+    "confirmed_tickets": 200
+  }
+}

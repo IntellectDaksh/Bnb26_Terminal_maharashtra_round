@@ -56,3 +56,4 @@ next-env.d.ts
 **/.ruff_cache/
 **/.coverage
 supabase/.temp/
+backend/.local-loadtest/

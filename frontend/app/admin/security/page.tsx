@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { api } from "@/lib/api";
 import type { AttackEvent } from "@/lib/contracts";
-import { MetricCard, Skeleton, cx } from "@/components/ui";
+import { Skeleton, cx } from "@/components/ui";
 import {
   Empty,
   Notice,
@@ -68,13 +68,13 @@ export default function SecurityPage() {
       <section aria-label="Security Metrics" className="grid grid-cols-2 gap-4 lg:grid-cols-5">
         {!m ? (
           Array.from({ length: 5 }, (_, i) => (
-            <div key={i} className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm">
+            <div key={i} className="rounded-xl border border-line bg-surface p-5 shadow-sm">
               <Skeleton className="h-16" />
             </div>
           ))
         ) : (
           <>
-            <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm hover:border-zinc-300 transition-colors">
+            <div className="rounded-xl border border-line bg-surface p-5 shadow-sm hover:border-zinc-300 transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Turnstile Solved</span>
                 <span className="size-2 rounded-full bg-emerald-500" />
@@ -85,7 +85,7 @@ export default function SecurityPage() {
               <div className="mt-1 text-xs text-emerald-700 font-medium">Passed human check</div>
             </div>
 
-            <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm hover:border-zinc-300 transition-colors">
+            <div className="rounded-xl border border-line bg-surface p-5 shadow-sm hover:border-zinc-300 transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Turnstile Failed</span>
                 <span className="size-2 rounded-full bg-red-500" />
@@ -93,10 +93,10 @@ export default function SecurityPage() {
               <div className="num mt-2 text-3xl font-semibold tracking-tight text-red-600">
                 {int(m.turnstile_fail)}
               </div>
-              <div className="mt-1 text-xs text-zinc-500 font-light">Blocked challenge failure</div>
+              <div className="mt-1 text-xs text-zinc-500 font-normal">Blocked challenge failure</div>
             </div>
 
-            <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm hover:border-zinc-300 transition-colors">
+            <div className="rounded-xl border border-line bg-surface p-5 shadow-sm hover:border-zinc-300 transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Pass Rate</span>
                 <span className="text-[10px] font-semibold text-emerald-600">Verified</span>
@@ -104,10 +104,10 @@ export default function SecurityPage() {
               <div className="num mt-2 text-3xl font-semibold tracking-tight text-emerald-700">
                 {pct(passRate, 1)}
               </div>
-              <div className="mt-1 text-xs text-zinc-500 font-light">Of total attempts</div>
+              <div className="mt-1 text-xs text-zinc-500 font-normal">Of total attempts</div>
             </div>
 
-            <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm hover:border-zinc-300 transition-colors">
+            <div className="rounded-xl border border-line bg-surface p-5 shadow-sm hover:border-zinc-300 transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Rate Limited</span>
                 <span className="size-2 rounded-full bg-amber-500" />
@@ -115,10 +115,10 @@ export default function SecurityPage() {
               <div className="num mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
                 {int(m.rate_limited)}
               </div>
-              <div className="mt-1 text-xs text-zinc-500 font-light">HTTP 429 throttles</div>
+              <div className="mt-1 text-xs text-zinc-500 font-normal">HTTP 429 throttles</div>
             </div>
 
-            <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm hover:border-zinc-300 transition-colors col-span-2 lg:col-span-1">
+            <div className="rounded-xl border border-line bg-surface p-5 shadow-sm hover:border-zinc-300 transition-colors col-span-2 lg:col-span-1">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Flagged Sessions</span>
                 <span className={m.flagged_sessions > 0 ? "size-2 rounded-full bg-amber-500" : "size-2 rounded-full bg-emerald-500"} />
@@ -126,7 +126,7 @@ export default function SecurityPage() {
               <div className="num mt-2 text-3xl font-semibold tracking-tight text-zinc-900">
                 {int(m.flagged_sessions)}
               </div>
-              <div className="mt-1 text-xs text-zinc-500 font-light">Device fingerprints monitored</div>
+              <div className="mt-1 text-xs text-zinc-500 font-normal">Device fingerprints monitored</div>
             </div>
           </>
         )}
@@ -189,7 +189,7 @@ export default function SecurityPage() {
                         {hhmmss(e.t)}
                       </time>
                     </div>
-                    <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-zinc-500 font-light">
+                    <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-zinc-500 font-normal">
                       <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-medium text-zinc-700">
                         {PROFILE_LABEL[e.profile] ?? e.profile}
                       </span>
@@ -219,7 +219,7 @@ export default function SecurityPage() {
             <TableWrap>
               <table className="w-full min-w-[340px]">
                 <thead>
-                  <tr className="border-b border-zinc-200/80 bg-zinc-50/75">
+                  <tr className="border-b border-line bg-zinc-50/75">
                     <th className={th}>Profile</th>
                     <th className={`${th} text-right`}>Requests</th>
                     <th className={`${th} text-right`}>Blocked %</th>
@@ -236,9 +236,9 @@ export default function SecurityPage() {
                       <td className={`${td} num text-right text-xs font-medium text-emerald-700`}>
                         {pct(p.requests ? p.blocked / p.requests : 0)}
                       </td>
-                      <td className={`${td} num text-right text-xs font-bold`}>
+                      <td className={`${td} num text-right text-xs font-semibold`}>
                         {p.seats_won > 0 ? (
-                          <span className="text-red-600 font-bold">{int(p.seats_won)}</span>
+                          <span className="text-red-600 font-semibold">{int(p.seats_won)}</span>
                         ) : (
                           <span className="inline-flex items-center gap-1 text-emerald-600 font-semibold">
                             <span className="size-1.5 rounded-full bg-emerald-500" />0
@@ -252,12 +252,12 @@ export default function SecurityPage() {
             </TableWrap>
           )}
 
-          <div className="mt-6 rounded-2xl border border-zinc-100 bg-zinc-50/60 p-4">
+          <div className="mt-6 rounded-xl border border-zinc-100 bg-zinc-50/60 p-4">
             <div className="flex items-center gap-2 text-xs font-semibold text-zinc-800">
               <span className="size-2 rounded-full bg-emerald-500" />
               <span>Cryptographic Fair-Queue Guarantee</span>
             </div>
-            <p className="mt-1 text-xs text-zinc-500 font-light leading-relaxed">
+            <p className="mt-1 text-xs text-zinc-500 font-normal leading-relaxed">
               In Fair Drop, even bots that pass edge Turnstile solving enter the randomized queue shuffle alongside verified humans. Their win rate is bounded strictly by their human count (1 entry per verified ID).
             </p>
           </div>

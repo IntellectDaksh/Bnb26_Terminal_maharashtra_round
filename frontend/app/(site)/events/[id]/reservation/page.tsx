@@ -41,9 +41,9 @@ export default function Reservation() {
   const attendeeName = user?.name || "Verified Attendee";
 
   return (
-    <PageShell className="pt-8 sm:pt-10">
+    <PageShell>
       <div className="mx-auto max-w-5xl">
-        <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14 items-start">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14 items-start">
           {/* Left: High-Urgency Callout & Prominent Countdown Clock */}
           <div className="rise">
             <div className="flex flex-wrap items-center gap-3">
@@ -51,7 +51,7 @@ export default function Reservation() {
               <RestoredNote>Reservation restored</RestoredNote>
             </div>
 
-            <h1 className="display mt-4 text-[clamp(2.8rem,6.5vw,5rem)]">
+            <h1 className="page-title mt-4">
               It&apos;s your <em className="accent-italic">turn.</em>
             </h1>
             <p className="mt-3 text-base text-zinc-600 leading-relaxed max-w-md">
@@ -61,10 +61,10 @@ export default function Reservation() {
             {/* Countdown Clock Container */}
             <div
               className={cx(
-                "mt-8 rounded-3xl border p-8 shadow-xl transition-all duration-300",
+                "mt-8 rounded-xl border p-8 shadow-sm transition-all duration-300",
                 urgent
                   ? "border-red-300 bg-red-50/70 shadow-red-900/10 ring-2 ring-red-400/30"
-                  : "border-zinc-200/80 bg-white shadow-emerald-900/5"
+                  : "border-line bg-surface "
               )}
               role="timer"
               aria-label={`${Math.floor(total / 60)} minutes ${total % 60} seconds remaining`}
@@ -72,7 +72,7 @@ export default function Reservation() {
               <div className="flex items-center justify-between">
                 <span
                   className={cx(
-                    "text-xs font-bold uppercase tracking-wider",
+                    "text-xs font-semibold uppercase tracking-wider",
                     urgent ? "text-red-700 animate-pulse" : "text-emerald-700"
                   )}
                 >
@@ -84,7 +84,7 @@ export default function Reservation() {
               {/* Large Tabular Digits */}
               <div
                 className={cx(
-                  "num flex items-baseline justify-center sm:justify-start gap-2 text-[clamp(4.8rem,13vw,7.5rem)] font-bold leading-none tracking-tight my-4 transition-colors duration-300",
+                  "num flex items-baseline justify-center sm:justify-start gap-2 text-[clamp(4.8rem,13vw,7.5rem)] font-semibold leading-none tracking-tight my-4 transition-colors duration-300",
                   urgent ? "text-red-600 animate-pulse" : "text-zinc-900"
                 )}
               >
@@ -100,7 +100,7 @@ export default function Reservation() {
                 <div
                   className={cx(
                     "h-full rounded-full transition-[width] duration-300 ease-linear",
-                    urgent ? "bg-red-500 animate-pulse" : "bg-gradient-to-r from-emerald-500 to-emerald-600"
+                    urgent ? "bg-red-500 animate-pulse" : "bg-zinc-900"
                   )}
                   style={{ width: `${Math.min(1, ms / windowMs) * 100}%` }}
                 />
@@ -113,7 +113,7 @@ export default function Reservation() {
             </div>
 
             {/* Reassurance Callout */}
-            <div className="mt-6 rounded-2xl border border-zinc-200/80 bg-zinc-50/80 p-4 text-xs leading-relaxed text-zinc-600 flex items-start gap-2.5">
+            <div className="mt-6 rounded-xl border border-line bg-zinc-50/80 p-4 text-xs leading-relaxed text-zinc-600 flex items-start gap-2.5">
               <span className="text-emerald-600 text-sm mt-0.5">🔒</span>
               <div>
                 <strong className="text-zinc-900">Guaranteed Seat Hold:</strong> No other participant can claim this seat while your timer is running. It is locked to your account on the server.
@@ -123,7 +123,7 @@ export default function Reservation() {
 
           {/* Right: Seat Reservation Summary Card */}
           <div className="rise">
-            <article className="overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-xl shadow-emerald-900/5">
+            <article className="overflow-hidden rounded-xl border border-line bg-surface shadow-sm">
               <div className="overflow-hidden border-b border-zinc-100 bg-zinc-50">
                 <EventArt category={event.category} className="aspect-[3/2] w-full" />
               </div>
@@ -131,16 +131,16 @@ export default function Reservation() {
               <div className="p-7 sm:p-8">
                 <div className="flex items-center justify-between">
                   <span className="eyebrow">Reservation Summary</span>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200/60">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 border border-emerald-200/60">
                     1 Seat Held
                   </span>
                 </div>
 
-                <h2 className="serif text-2xl font-bold text-zinc-900 mt-2">{event.name}</h2>
+                <h2 className="serif text-2xl font-semibold text-zinc-900 mt-2">{event.name}</h2>
                 <p className="mt-1 text-sm text-zinc-500">{event.venue}, {event.city}</p>
 
                 {/* Seat Reservation Details: Category, Attendee, Held Hold Time */}
-                <dl className="mt-6 divide-y divide-zinc-100 rounded-2xl border border-zinc-100 bg-zinc-50/60 p-4 text-xs">
+                <dl className="mt-6 divide-y divide-zinc-100 rounded-xl border border-zinc-100 bg-zinc-50/60 p-4 text-xs">
                   <div className="flex items-center justify-between py-2">
                     <dt className="text-zinc-500">Seat Category</dt>
                     <dd className="font-semibold text-zinc-900">General Admission (1 Ticket)</dd>
@@ -159,7 +159,7 @@ export default function Reservation() {
                   </div>
                   <div className="flex items-center justify-between py-2 pt-2.5 text-sm">
                     <dt className="font-medium text-zinc-700">Total Price</dt>
-                    <dd className="font-bold text-zinc-900">{fmtPrice(event.price_inr)}</dd>
+                    <dd className="font-semibold text-zinc-900">{fmtPrice(event.price_inr)}</dd>
                   </div>
                 </dl>
 
@@ -169,7 +169,7 @@ export default function Reservation() {
                   disabled={action.blocked || ms <= 0}
                   onClick={() => void action.run()}
                   className={cx(
-                    "mt-7 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg shadow-emerald-900/10 transition-all duration-200 flex items-center justify-center gap-2 text-base active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed",
+                    "mt-7 w-full bg-zinc-900 hover:bg-zinc-800 text-white font-semibold py-4 px-6 rounded-xl shadow-sm  transition-all duration-200 flex items-center justify-center gap-2 text-base active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed",
                     action.pending && "cursor-wait"
                   )}
                 >

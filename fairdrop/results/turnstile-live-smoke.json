@@ -1,0 +1,31 @@
+{
+  "scope": "Real Cloudflare Siteverify; official dummy keys; no real widget solving",
+  "documentation": "https://developers.cloudflare.com/turnstile/troubleshooting/testing/",
+  "results": [
+    {
+      "case": "pass",
+      "siteverify_success": true,
+      "action": null,
+      "backend_allowed": false,
+      "error_codes": []
+    },
+    {
+      "case": "fail",
+      "siteverify_success": false,
+      "action": null,
+      "backend_allowed": false,
+      "error_codes": [
+        "invalid-input-response"
+      ]
+    },
+    {
+      "case": "spent",
+      "siteverify_success": false,
+      "action": null,
+      "backend_allowed": false,
+      "error_codes": [
+        "timeout-or-duplicate"
+      ]
+    }
+  ]
+}

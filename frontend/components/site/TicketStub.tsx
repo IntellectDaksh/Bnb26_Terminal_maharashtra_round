@@ -6,10 +6,10 @@ import type { EventInfo, Ticket } from "@/lib/contracts";
 export function QRCard({ value, size = 132 }: { value: string; size?: number }) {
   return (
     <figure className="flex flex-col items-center">
-      <div className="rounded-2xl border border-zinc-200/80 bg-white p-3.5 shadow-sm">
+      <div className="rounded-xl border border-line bg-white p-3.5">
         <QRCodeSVG value={value} size={size} level="M" bgColor="#ffffff" fgColor="#09090b" title={`Ticket ${value}`} />
       </div>
-      <figcaption className="mt-3 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">Show at entry</figcaption>
+      <figcaption className="mt-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-500">Show at entry</figcaption>
     </figure>
   );
 }
@@ -41,15 +41,15 @@ export function icsHref(t: Ticket, ev: EventInfo) {
 export function Perforation({ vertical }: { vertical?: boolean }) {
   return vertical ? (
     <div className="relative w-8 shrink-0 flex items-center justify-center select-none" aria-hidden>
-      <span className="absolute -top-4 left-1/2 -translate-x-1/2 size-8 rounded-full bg-[#fafafa] border border-zinc-200/80" />
-      <span className="h-full border-l-2 border-dashed border-zinc-200" />
-      <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 size-8 rounded-full bg-[#fafafa] border border-zinc-200/80" />
+      <span className="absolute -top-4 left-1/2 -translate-x-1/2 size-8 rounded-full bg-bg border border-line" />
+      <span className="h-full border-l-2 border-dashed border-line" />
+      <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 size-8 rounded-full bg-bg border border-line" />
     </div>
   ) : (
     <div className="relative h-8 w-full flex items-center justify-center select-none" aria-hidden>
-      <span className="absolute -left-4 top-1/2 -translate-y-1/2 size-8 rounded-full bg-[#fafafa] border border-zinc-200/80" />
-      <span className="w-full border-t-2 border-dashed border-zinc-200" />
-      <span className="absolute -right-4 top-1/2 -translate-y-1/2 size-8 rounded-full bg-[#fafafa] border border-zinc-200/80" />
+      <span className="absolute -left-4 top-1/2 -translate-y-1/2 size-8 rounded-full bg-bg border border-line" />
+      <span className="w-full border-t-2 border-dashed border-line" />
+      <span className="absolute -right-4 top-1/2 -translate-y-1/2 size-8 rounded-full bg-bg border border-line" />
     </div>
   );
 }

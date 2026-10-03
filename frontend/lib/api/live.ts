@@ -11,6 +11,9 @@ import { ApiError, type Api } from "./types";
 export const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "").replace(/\/$/, "");
 
 export async function request<T>(path: string, schema: z.ZodType<T>, init: RequestInit = {}): Promise<T> {
+  const endpoint = path.split("/").at(-1) ?? path;
+  const remaining = Math.ceil(((endpointCooldowns.get(endpoint) ?? 0) - Date.now()) / 1000);
+  if (remaining > 0) throw new ApiError(429, "rate_limited", "Please wait before trying again.", remaining);
   const token = await accessToken();
   const headers = new Headers(init.headers);
   if (token) headers.set("Authorization", `Bearer ${token}`);
@@ -25,6 +28,9 @@ export async function request<T>(path: string, schema: z.ZodType<T>, init: Reque
   if (!res.ok) {
     const err = ApiErrorBody.safeParse(body);
     const retryHeader = Number(res.headers.get("Retry-After"));
+    if (res.status === 429 && Number.isFinite(retryHeader) && retryHeader > 0) {
+      endpointCooldowns.set(endpoint, Date.now() + retryHeader * 1000);
+    }
     throw new ApiError(
       res.status,
       err.success ? err.data.code : `http_${res.status}`,
@@ -46,6 +52,21 @@ const post = (body: unknown, key?: string): RequestInit => ({
   headers: key ? { "Idempotency-Key": key } : undefined,
 });
 const ev = (id: string) => `/events/${encodeURIComponent(id)}`;
+
+let memoryDeviceId: string | undefined;
+const endpointCooldowns = new Map<string, number>();
+function deviceId(): string {
+  // A weak abuse signal, shared across account switches in the same browser.
+  try {
+    const stored = localStorage.getItem("fairdrop-device-id");
+    if (stored && stored.length >= 8 && stored.length <= 128) return stored;
+    const id = memoryDeviceId ??= crypto.randomUUID();
+    localStorage.setItem("fairdrop-device-id", id);
+    return id;
+  } catch {
+    return memoryDeviceId ??= crypto.randomUUID();
+  }
+}
 
 export const getAdminStatus = (id: string) => request(`/admin${ev(id)}/status`, AdminSnapshot);
 export async function liveAdminAction(id: string, action: "open" | "close" | "draw") {
@@ -80,7 +101,7 @@ export const liveApi: Api = {
   },
   async register(id, body) {
     const result = await request(`${ev(id)}/register`, BackendRegisterResult,
-      post({ security_token: body.turnstile_token }, body.idempotency_key));
+      post({ security_token: body.turnstile_token, device_fp: deviceId() }, body.idempotency_key));
     return { created: result.created, me: await liveApi.getMe(id) };
   },
   async confirm(id) {

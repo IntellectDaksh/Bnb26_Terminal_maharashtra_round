@@ -1,5 +1,14 @@
 # Disposable integration database. No volumes or Supabase account required.
 services:
+  test-redis:
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
   test-db:
     image: postgres:17
     environment:

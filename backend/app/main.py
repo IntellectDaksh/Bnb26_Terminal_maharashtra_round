@@ -3,6 +3,10 @@ from contextlib import asynccontextmanager
 import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from redis.asyncio import Redis
+from redis.backoff import NoBackoff
+from redis.exceptions import RedisError
+from redis.retry import Retry
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -12,7 +16,9 @@ from app.core.errors import AppError, ErrorResponse, install_error_handlers
 from app.db.connection import create_engine, session_factory
 from app.routes import admin, events, registrations, reservations
 from app.schemas.events import HealthResponse
+from app.security.abuse import AbuseGuard
 from app.security.interface import ExternalSecurityVerifier
+from app.security.turnstile import TurnstileVerifier
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -21,15 +27,33 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         engine = create_engine(settings)
+        redis = (
+            Redis.from_url(
+                settings.redis_url.get_secret_value(),
+                socket_timeout=1,
+                socket_connect_timeout=1,
+                max_connections=100,
+                retry=Retry(NoBackoff(), 0),
+            )
+            if settings.abuse_protection_enabled
+            else None
+        )
         async with httpx.AsyncClient(timeout=5) as http:
             app.state.settings = settings
             app.state.engine = engine
             app.state.sessions = session_factory(engine)
             app.state.tokens = TokenVerifier(settings, http)
-            app.state.security = ExternalSecurityVerifier(settings, http)
+            app.state.abuse = AbuseGuard(settings, redis)
+            app.state.security = (
+                TurnstileVerifier(settings, http)
+                if settings.turnstile_secret_key
+                else ExternalSecurityVerifier(settings, http)
+            )
             try:
                 yield
             finally:
+                if redis:
+                    await redis.aclose()
                 await engine.dispose()
 
     app = FastAPI(title="Fair Drop Backend", version="1.0.0", lifespan=lifespan)
@@ -46,7 +70,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             router,
             prefix="/api/v1",
             responses={
-                status: {"model": ErrorResponse} for status in (401, 403, 404, 409, 422, 500, 503)
+                status: {"model": ErrorResponse}
+                for status in (401, 403, 404, 409, 422, 429, 500, 503)
             },
         )
 
@@ -61,6 +86,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         responses={503: {"model": ErrorResponse}},
     )
     async def ready() -> HealthResponse:
+        if settings.abuse_protection_enabled:
+            try:
+                await app.state.abuse.redis.ping()
+            except (RedisError, OSError) as exc:
+                raise AppError(503, "not_ready", "Traffic protection unavailable.", 5) from exc
         try:
             async with app.state.engine.connect() as connection:
                 # Check the actual migrated schema, not merely database reachability.

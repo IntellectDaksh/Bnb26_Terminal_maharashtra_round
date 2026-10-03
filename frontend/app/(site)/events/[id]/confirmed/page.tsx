@@ -15,9 +15,9 @@ export default function Confirmed() {
   const t = me.ticket;
 
   return (
-    <PageShell className="pt-8 sm:pt-10">
+    <PageShell>
       <div className="mx-auto max-w-5xl">
-        <div className="grid items-start gap-10 lg:grid-cols-[1.1fr_420px] lg:gap-16">
+        <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[1.1fr_420px] lg:gap-16">
           {/* Left Celebration Column */}
           <div className="rise text-center lg:text-left">
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/80 bg-emerald-50 px-3.5 py-1.5 text-xs font-semibold text-emerald-800">
@@ -25,7 +25,7 @@ export default function Confirmed() {
               <span>Seat Allocation Confirmed</span>
             </div>
 
-            <h1 className="display mt-4 text-[clamp(2.8rem,7vw,5.5rem)]">
+            <h1 className="page-title mt-4">
               You&apos;re <em className="accent-italic">in.</em>
             </h1>
             <p className="mt-3 text-lg text-zinc-600 max-w-lg">
@@ -43,11 +43,11 @@ export default function Confirmed() {
             </div>
 
             {/* Action Toolbar */}
-            <div className="mt-8 pt-6 border-t border-zinc-200/80 flex flex-wrap items-center justify-center lg:justify-start gap-3">
+            <div className="mt-8 pt-6 border-t border-line flex flex-wrap items-center justify-center lg:justify-start gap-3">
               <a
                 href={icsHref(t, event)}
                 download={`${event.id}.ics`}
-                className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-xs font-semibold text-zinc-800 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition-all"
+                className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-4 py-2.5 text-xs font-semibold text-zinc-800 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition-all"
               >
                 <svg viewBox="0 0 24 24" className="size-4 text-emerald-600" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
                   <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
@@ -60,7 +60,7 @@ export default function Confirmed() {
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-xs font-semibold text-zinc-800 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition-all"
+                className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-4 py-2.5 text-xs font-semibold text-zinc-800 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition-all"
               >
                 <svg viewBox="0 0 24 24" className="size-4 text-zinc-600" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
                   <polyline points="6 9 6 2 18 2 18 9" />
@@ -77,18 +77,18 @@ export default function Confirmed() {
           </div>
 
           {/* Right: Digital Luxury Ticket Pass with Perforated Notch Edges */}
-          <article className="rise overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-xl shadow-emerald-900/5" aria-label="Digital Ticket Pass">
+          <article className="rise overflow-hidden rounded-xl border border-line bg-surface shadow-sm" aria-label="Digital Ticket Pass">
             {/* Top Pass Details */}
             <div className="p-7 sm:p-8">
               <div className="flex items-center justify-between gap-3">
-                <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-500">Admit One</span>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 border border-emerald-200/70">
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-zinc-500">Admit One</span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 border border-emerald-200/70">
                   <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   VERIFIED PASS
                 </span>
               </div>
 
-              <h2 className="serif text-2xl font-bold text-zinc-900 mt-4 leading-tight">{event.name}</h2>
+              <h2 className="serif text-2xl font-semibold text-zinc-900 mt-4 leading-tight">{event.name}</h2>
               <p className="text-xs text-zinc-500 mt-1">{event.venue}, {event.city}</p>
 
               <dl className="mt-6 grid grid-cols-3 gap-3 border-t border-zinc-100 pt-5 text-xs">
@@ -102,7 +102,7 @@ export default function Confirmed() {
                 </div>
                 <div>
                   <dt className="text-zinc-500">Seat</dt>
-                  <dd className="serif num mt-0.5 text-xl font-bold text-emerald-600">{t.seat_label}</dd>
+                  <dd className="serif num mt-0.5 text-xl font-semibold text-emerald-600">{t.seat_label}</dd>
                 </div>
               </dl>
             </div>
@@ -115,14 +115,14 @@ export default function Confirmed() {
               <QRCard value={qrValue(t)} size={140} />
 
               <div className="mt-3 text-center">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Ticket Identifier</div>
-                <div className="num font-mono mt-1 text-xs font-bold tracking-wider text-zinc-900" data-testid="ticket-id">
+                <div className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">Ticket Identifier</div>
+                <div className="num font-mono mt-1 text-xs font-semibold tracking-wider text-zinc-900" data-testid="ticket-id">
                   {t.ticket_id}
                 </div>
               </div>
 
               <div className="mt-5 w-full flex items-center justify-center gap-4 text-xs font-semibold">
-                <a href={icsHref(t, event)} download={`${event.id}.ics`} className="text-emerald-700 hover:text-emerald-800 hover:underline">
+                <a href={icsHref(t, event)} download={`${event.id}.ics`} className="text-emerald-700 hover:text-fg hover:underline">
                   Add to Calendar (.ics)
                 </a>
                 <span className="text-zinc-300">·</span>

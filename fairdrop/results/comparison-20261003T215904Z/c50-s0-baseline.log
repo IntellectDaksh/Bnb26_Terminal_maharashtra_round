@@ -1,0 +1,21 @@
+Mixed traffic complete: 3450 requests in 23.92s
+Report: C:\Users\royan\Programming\Hackathons\Build n buits hackathon\fairdrop\results\local-20261003T220027Z\report.html
+{
+  "verdict": "Baseline: abuse protection disabled",
+  "bot_request_block_pct": 8.14,
+  "database_checks": {
+    "tickets_by_role": {
+      "legit": 176,
+      "multi": 19,
+      "flood": 4,
+      "dup": 1
+    },
+    "registration_rows": 1120,
+    "human_rows": 1000,
+    "invalid_challenge_bot_rows": 0,
+    "unauthenticated_bot_rows": 0,
+    "duplicate_bot_rows": 10,
+    "capacity": 200,
+    "confirmed_tickets": 200
+  }
+}

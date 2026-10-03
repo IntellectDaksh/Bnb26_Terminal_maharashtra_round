@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+redis>=5
+httpx
+cryptography
+pydantic[email]
+locust>=2.31

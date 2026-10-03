@@ -107,12 +107,12 @@ export default function Register() {
   const step = !user ? 0 : !detailsOk ? 1 : !token ? 2 : 3;
 
   return (
-    <PageShell className="pt-8 sm:pt-10">
+    <PageShell>
       <BackLink href={eventPath(eventId)}>{event.name}</BackLink>
       
-      <div className="mt-8 grid gap-10 lg:grid-cols-[1.3fr_1fr] lg:gap-14">
+      <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-[1.3fr_1fr] lg:gap-14">
         {/* Main Registration Card */}
-        <div className="bg-white p-8 md:p-12 rounded-3xl border border-zinc-200/80 shadow-xl shadow-emerald-900/5">
+        <div className="min-w-0 bg-surface p-6 sm:p-8 md:p-12 rounded-xl border border-line shadow-sm">
           {/* 4-step visual stepper */}
           <div className="mb-8 border-b border-zinc-100 pb-6">
             <div className="flex items-center justify-between gap-2 sm:gap-3">
@@ -125,9 +125,9 @@ export default function Register() {
                       <span
                         className={cx(
                           "flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-all",
-                          isCompleted && "bg-emerald-600 text-white shadow-sm shadow-emerald-900/20",
-                          isCurrent && "border-2 border-emerald-600 bg-emerald-50 text-emerald-700 font-bold",
-                          !isCompleted && !isCurrent && "bg-zinc-100 text-zinc-400 border border-zinc-200/60"
+                          isCompleted && "bg-zinc-900 text-white shadow-sm ",
+                          isCurrent && "border-2 border-zinc-900 bg-bg-2 text-fg font-semibold",
+                          !isCompleted && !isCurrent && "bg-zinc-100 text-zinc-400 border border-line"
                         )}
                       >
                         {isCompleted ? (
@@ -165,16 +165,16 @@ export default function Register() {
 
           <div>
             <span className="eyebrow">Fair Participant Drop</span>
-            <h1 className="display mt-2 text-[clamp(2.2rem,4.5vw,3.4rem)]">
-              Join the <em className="accent-italic">drop.</em>
+            <h1 className="page-title mt-2">
+              Create your account.
             </h1>
             <p className="mt-2 text-sm text-zinc-600">
-              One entry per verified Google account. Anti-bot and sybil resistance verified.
+              Sign in with Google to continue. One person, one entry.
             </p>
           </div>
 
           {/* Reassurance copy banner */}
-          <div className="mt-5 rounded-2xl border border-emerald-200/60 bg-emerald-50/50 p-4 text-xs leading-relaxed text-emerald-900 flex items-start gap-3">
+          <div className="mt-5 rounded-xl border border-emerald-200/60 bg-emerald-50/50 p-4 text-xs leading-relaxed text-emerald-900 flex items-start gap-3">
             <span className="mt-0.5 text-base leading-none" aria-hidden>🛡️</span>
             <div>
               <strong className="font-semibold text-emerald-950">Fair Queue Policy:</strong> Early registration does not grant early queue position. All entrants are placed into a randomized queue once registration closes, guaranteeing everyone an equal chance.
@@ -191,7 +191,7 @@ export default function Register() {
             ) : user ? (
               <div className="flex items-center justify-between rounded-xl border border-emerald-200/80 bg-emerald-50/40 p-3.5 text-sm">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white border border-zinc-200 shadow-sm">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-surface border border-line shadow-sm">
                     <GoogleMark />
                   </div>
                   <div className="min-w-0">
@@ -211,7 +211,7 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={() => signIn(eventPath(eventId, "register")).catch(() => setAuthError("Google sign-in didn't start. Please try again."))}
-                  className="w-full flex items-center justify-center gap-3 py-3.5 px-5 bg-white hover:bg-zinc-50 border border-zinc-200 hover:border-zinc-300 rounded-xl font-semibold text-zinc-900 shadow-sm transition-all duration-200 active:scale-[0.99]"
+                  className="w-full flex items-center justify-center gap-3 py-3.5 px-5 bg-surface hover:bg-zinc-50 border border-line hover:border-zinc-300 rounded-xl font-semibold text-zinc-900 shadow-sm transition-all duration-200 active:scale-[0.99]"
                 >
                   <GoogleMark />
                   <span>Continue with Google</span>
@@ -252,7 +252,7 @@ export default function Register() {
                   name="organization"
                   value={org}
                   onChange={(e) => setOrg(e.target.value)}
-                  className="form-input appearance-none bg-white pr-10 cursor-pointer"
+                  className="form-input appearance-none bg-surface pr-10 cursor-pointer"
                 >
                   <option value="" disabled>
                     Select your college or organization
@@ -283,11 +283,11 @@ export default function Register() {
             </div>
 
             {/* Step 3: Turnstile human verification container card */}
-            <div className={cx("rounded-2xl border border-zinc-200/80 bg-zinc-50/70 p-5 transition-all", !detailsOk && "opacity-60")}>
+            <div className={cx("rounded-xl border border-line bg-zinc-50/70 p-5 transition-all", !detailsOk && "opacity-60")}>
               <div className="flex items-center justify-between gap-3">
                 <span className="flex items-center gap-2 text-sm font-semibold text-zinc-900">
                   {token ? (
-                    <span className="flex size-5 items-center justify-center rounded-full bg-emerald-600 text-white">
+                    <span className="flex size-5 items-center justify-center rounded-full bg-zinc-900 text-white">
                       <svg viewBox="0 0 16 16" className="size-3" aria-hidden>
                         <path d="M3.5 8.5l3 3 6-6.5" stroke="currentColor" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
@@ -297,7 +297,7 @@ export default function Register() {
                   )}
                   {token ? "Verification Complete" : "Step 3 · Human Verification"}
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-500">Cloudflare Turnstile</span>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Cloudflare Turnstile</span>
               </div>
               <div className="mt-3.5 min-h-[65px] flex items-center justify-center sm:justify-start">
                 {user && detailsOk ? (
@@ -331,7 +331,7 @@ export default function Register() {
             type="button"
             disabled={step < 3 || action.blocked}
             onClick={onSubmit}
-            className="mt-8 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-4 rounded-xl shadow-lg shadow-emerald-900/10 transition-all duration-200 flex items-center justify-center gap-2 text-base active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed"
+            className="mt-8 w-full bg-zinc-900 hover:bg-zinc-800 text-white font-semibold py-4 rounded-xl shadow-sm  transition-all duration-200 flex items-center justify-center gap-2 text-base active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {action.pending ? (
               <>
@@ -362,12 +362,12 @@ export default function Register() {
         {/* Aside: Event Overview & Trust Signals */}
         <aside className="hidden lg:block">
           <div className="sticky top-24 space-y-6">
-            <div className="overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-sm p-6">
-              <div className="overflow-hidden rounded-2xl border border-zinc-100 bg-zinc-50">
+            <div className="overflow-hidden rounded-xl border border-line bg-surface shadow-sm p-6">
+              <div className="overflow-hidden rounded-xl border border-zinc-100 bg-zinc-50">
                 <EventArt category={event.category} className="aspect-[3/2] w-full" />
               </div>
               <div className="mt-5">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Event Overview</span>
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-600">Event Overview</span>
                 <h2 className="serif text-2xl font-semibold text-zinc-900 mt-1">{event.name}</h2>
                 <div className="mt-2 text-sm text-zinc-600 flex flex-col gap-1">
                   <span>{fmtDate(event.starts_at)}</span>
@@ -377,8 +377,8 @@ export default function Register() {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-sm">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-900 mb-4">Drop Security Guarantees</h3>
+            <div className="rounded-xl border border-line bg-surface p-6 shadow-sm">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-900 mb-4">Drop Security Guarantees</h3>
               <ul className="space-y-3.5 text-xs text-zinc-600">
                 <li className="flex items-start gap-2.5">
                   <span className="size-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0" />

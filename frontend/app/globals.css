@@ -1,25 +1,47 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #fafafa;
-  --bg-2: #f4f4f5;
-  --surface: #ffffff;
-  --fg: #18181b;
-  --muted: #71717a;
-  --line: #e4e4e7;
-  --accent: #059669;
-  --accent-hover: #047857;
+  --bg: #f1eee7;
+  --bg-2: #eae6de;
+  --surface: #faf8f3;
+  --fg: #171816;
+  --muted: #74736c;
+  --line: #dcd7ce;
+  --accent: #171816;
+  --accent-hover: #30312d;
   --accent-ink: #ffffff;
-  --accent-2: #10b981;
-  --accent-soft: #ecfdf5;
-  --success: #059669;
-  --success-soft: #ecfdf5;
+  --accent-2: #b6ac9e;
+  --accent-soft: #eae6de;
+  --success: #488158;
+  --success-soft: #eaf0e6;
   --danger: #dc2626;
   --danger-soft: #fef2f2;
   --chart-grey: #a1a1aa;
 }
 
 @theme inline {
+  --color-zinc-50: #f6f3ed;
+  --color-zinc-100: #ede9e1;
+  --color-zinc-200: #ded9cf;
+  --color-zinc-300: #c9c3b8;
+  --color-zinc-400: #9b978e;
+  --color-zinc-500: #75736c;
+  --color-zinc-600: #5a5953;
+  --color-zinc-700: #42433d;
+  --color-zinc-800: #2b2c28;
+  --color-zinc-900: #171816;
+  --color-zinc-950: #11120f;
+  --color-emerald-50: #edf2e9;
+  --color-emerald-100: #dde8d7;
+  --color-emerald-200: #c3d5bd;
+  --color-emerald-300: #a2b99a;
+  --color-emerald-400: #81a47a;
+  --color-emerald-500: #608f67;
+  --color-emerald-600: #488158;
+  --color-emerald-700: #386544;
+  --color-emerald-800: #2f5037;
+  --color-emerald-900: #294430;
+  --color-emerald-950: #16291c;
   --color-bg: var(--bg);
   --color-bg-2: var(--bg-2);
   --color-surface: var(--surface);
@@ -38,9 +60,9 @@
   --color-chart-grey: var(--chart-grey);
   --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
   --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-xl: 24px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
   --shadow-soft: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
   --shadow-glow: 0 0 35px -5px rgba(5, 150, 105, 0.25);
 }
@@ -56,6 +78,121 @@ body {
   color: var(--fg);
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   -webkit-tap-highlight-color: transparent;
+}
+
+.site-page {
+  padding-top: 112px;
+}
+
+.page-title {
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
+.page-title em { font-style: normal; color: inherit; }
+
+.page-description {
+  max-width: 42rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.auth-page {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  padding: 32px 16px;
+  background: var(--bg);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 32px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.admin-page { background: var(--bg); }
+.admin-page .page-title { font-size: clamp(1.8rem, 3vw, 2.5rem); }
+
+@media (min-width: 640px) {
+  .site-page { padding-top: 128px; }
+}
+
+.landing-hero {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.hero-copy {
+  align-self: center;
+  padding: 64px 40px;
+}
+
+.hero-photo {
+  position: relative;
+  min-height: 530px;
+  margin: 12px 12px 0 0;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.hero-photo-caption {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 64px 24px 24px;
+  color: white;
+  background: linear-gradient(transparent, rgba(17, 18, 15, 0.65));
+}
+
+.hero-facts {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 28px 40px;
+  gap: 24px;
+}
+
+.hero-facts > div + div {
+  border-left: 1px solid var(--line);
+  padding-left: 24px;
+}
+
+.queue-stage {
+  padding: 28px;
+  border-radius: 16px;
+  background: linear-gradient(rgba(17, 18, 15, 0.72), rgba(17, 18, 15, 0.58)), url('/images/fair-drop-campus.png') center / cover;
+}
+
+.queue-stage .queue-heading { text-align: center; }
+.queue-stage .queue-heading h1 { color: white; }
+.queue-stage .queue-heading em { color: white; }
+.queue-stage .queue-heading p { margin-inline: auto; color: #e0dcd4; }
+.queue-stage .queue-heading .eyebrow { color: #d2cec5; }
+.queue-stage > a { color: #e0dcd4; }
+.queue-position { background: rgba(250, 248, 243, 0.91); }
+
+@media (max-width: 767px) {
+  .landing-hero { grid-template-columns: 1fr; }
+  .hero-copy { padding: 40px 24px; }
+  .hero-photo { min-height: 340px; margin: 0 12px; }
+  .hero-facts { grid-template-columns: repeat(2, 1fr); padding: 24px; gap: 24px 16px; }
+  .hero-facts > div + div { border: 0; padding-left: 0; }
+  .queue-stage { padding: 20px 14px; }
 }
 
 /* Custom modern scrollbars */
@@ -76,7 +213,7 @@ body {
 
 /* Glassmorphism panels */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(250, 248, 243, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -87,22 +224,25 @@ body {
   -webkit-backdrop-filter: blur(12px);
 }
 
-/* Form inputs matching template */
+/* Keep component defaults below utilities such as search-icon padding. */
+@layer components {
 .form-input {
   width: 100%;
-  background: #ffffff;
-  border: 1px solid #e4e4e7;
-  border-radius: 0.75rem;
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
-  color: #18181b;
+  color: var(--fg);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .form-input:focus {
   outline: none;
-  border-color: #059669;
-  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+  border-color: var(--fg);
+  box-shadow: 0 0 0 3px rgba(23, 24, 22, 0.08);
+}
 }
 
 .num {
@@ -118,8 +258,8 @@ body {
 }
 .display em,
 .accent-italic {
-  font-style: italic;
-  color: #059669;
+  font-style: normal;
+  color: var(--fg);
 }
 
 .serif {
@@ -129,13 +269,13 @@ body {
 .eyebrow {
   font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #059669;
+  color: var(--muted);
 }
 
 :focus-visible {
-  outline: 2px solid #059669;
+  outline: 2px solid var(--fg);
   outline-offset: 2px;
   border-radius: 8px;
 }

@@ -41,22 +41,22 @@ export default function ReservationsPage() {
       {error && <Notice error={error} retryIn={alloc.retryIn || metrics.retryIn} />}
 
       {/* Primary Capacity & Progress Card */}
-      <div className="rounded-3xl border border-zinc-200/80 bg-white p-6 sm:p-8 shadow-sm">
+      <div className="rounded-xl border border-line bg-surface p-6 sm:p-8 shadow-sm">
         {!a || !m ? (
           <Skeleton className="h-32" />
         ) : (
           <>
             <div className="flex flex-wrap items-baseline justify-between gap-4">
               <div>
-                <span className="num text-4xl sm:text-5xl font-bold tracking-tight text-zinc-900">
+                <span className="num text-4xl sm:text-5xl font-semibold tracking-tight text-zinc-900">
                   {int(m.seats_confirmed)}
                 </span>
-                <span className="num ml-2.5 text-sm text-zinc-500 font-light">
+                <span className="num ml-2.5 text-sm text-zinc-500 font-normal">
                   of {int(totalSeats)} total seats confirmed
                 </span>
               </div>
               <div className="flex items-center gap-3">
-                <span className="num text-xl font-bold text-emerald-700">
+                <span className="num text-xl font-semibold text-emerald-700">
                   {pct(confirmedRatio, 0)}
                 </span>
                 <span className="text-xs uppercase font-semibold tracking-wider text-zinc-400">Sold</span>
@@ -82,17 +82,17 @@ export default function ReservationsPage() {
                 sub="Sequenced admission"
               />
               {/* Active reservation window countdown card */}
-              <div className="rounded-2xl border border-zinc-100 bg-emerald-50/40 p-4">
+              <div className="rounded-xl border border-zinc-100 bg-emerald-50/40 p-4">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-800">
                     Hold Window
                   </span>
                   <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
                 </div>
-                <div className="num mt-2 text-2xl font-bold text-emerald-900">
+                <div className="num mt-2 text-2xl font-semibold text-emerald-900">
                   {reservationWindow}s
                 </div>
-                <div className="mt-1 text-xs text-emerald-700 font-light truncate">
+                <div className="mt-1 text-xs text-emerald-700 font-normal truncate">
                   Auto-release on timeout
                 </div>
               </div>
@@ -157,25 +157,25 @@ export default function ReservationsPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-3 border-t border-zinc-100 pt-5">
-                <div className="rounded-2xl border border-zinc-100 bg-zinc-50/70 p-3.5">
+                <div className="rounded-xl border border-zinc-100 bg-zinc-50/70 p-3.5">
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
                     Duplicates
                   </span>
-                  <div className="num mt-1 text-2xl font-bold text-zinc-900">
+                  <div className="num mt-1 text-2xl font-semibold text-zinc-900">
                     {int(a.integrity.duplicate_allocations)}
                   </div>
                 </div>
-                <div className="rounded-2xl border border-zinc-100 bg-zinc-50/70 p-3.5">
+                <div className="rounded-xl border border-zinc-100 bg-zinc-50/70 p-3.5">
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
                     Oversold
                   </span>
-                  <div className="num mt-1 text-2xl font-bold text-zinc-900">
+                  <div className="num mt-1 text-2xl font-semibold text-zinc-900">
                     {int(a.integrity.oversold)}
                   </div>
                 </div>
               </div>
 
-              <p className="text-xs text-zinc-500 font-light leading-relaxed">
+              <p className="text-xs text-zinc-500 font-normal leading-relaxed">
                 Guaranteed by single-row Postgres constraints and atomic conditional updates. Double allocation is structurally impossible.
               </p>
             </div>
@@ -196,7 +196,7 @@ export default function ReservationsPage() {
           <TableWrap>
             <table className="w-full min-w-[560px]">
               <thead>
-                <tr className="border-b border-zinc-200/80 bg-zinc-50/75">
+                <tr className="border-b border-line bg-zinc-50/75">
                   <th className={th}>Batch #</th>
                   <th className={th}>Admitted Time</th>
                   <th className={`${th} text-right`}>Batch Size</th>
@@ -210,7 +210,7 @@ export default function ReservationsPage() {
                   const conv = b.size > 0 ? (b.confirmed / b.size) * 100 : 0;
                   return (
                     <tr key={b.batch} className="hover:bg-zinc-50/60 transition-colors">
-                      <td className={`${td} font-bold text-zinc-900`}>Batch #{b.batch}</td>
+                      <td className={`${td} font-semibold text-zinc-900`}>Batch #{b.batch}</td>
                       <td className={`${td} num text-xs text-zinc-500 font-mono`}>{hhmmss(b.admitted_at)}</td>
                       <td className={`${td} num text-right text-zinc-800`}>{int(b.size)}</td>
                       <td className={`${td} num text-right text-emerald-600 font-medium`}>{int(b.confirmed)}</td>

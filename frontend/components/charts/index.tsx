@@ -17,43 +17,43 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Card, cx } from "@/components/ui";
+import { cx } from "@/components/ui";
 
 /**
- * Modern zinc + emerald palette:
- * - Emerald (#059669, #10b981) for Protected Queue, successes and active highlights
- * - Dark zinc (#18181b, #27272a) for contrast and neutral series
- * - Muted zinc (#71717a, #a1a1aa) for FIFO baseline and axes
+ * Warm neutral palette with green for status:
+ * - Emerald (#488158, #608f67) for Protected Queue, successes and active highlights
+ * - Dark zinc (#171816, #2b2c28) for contrast and neutral series
+ * - Muted zinc (#75736c, #9b978e) for FIFO baseline and axes
  * - Danger (#ef4444) for blocked requests and malicious bots
  */
 export const C = {
-  emerald: "#059669",
-  emeraldLight: "#10b981",
-  emeraldDark: "#047857",
-  emeraldSoft: "#ecfdf5",
-  zinc950: "#09090b",
-  zinc900: "#18181b",
-  zinc800: "#27272a",
-  zinc700: "#3f3f46",
-  zinc500: "#71717a",
-  zinc400: "#a1a1aa",
-  zinc200: "#e4e4e7",
-  zinc100: "#f4f4f5",
-  fg: "#059669", // Protected Queue primary (emerald)
-  grey: "#71717a", // FIFO comparison / baseline (zinc-500)
+  emerald: "#488158",
+  emeraldLight: "#608f67",
+  emeraldDark: "#386544",
+  emeraldSoft: "#edf2e9",
+  zinc950: "#11120f",
+  zinc900: "#171816",
+  zinc800: "#2b2c28",
+  zinc700: "#42433d",
+  zinc500: "#75736c",
+  zinc400: "#9b978e",
+  zinc200: "#ded9cf",
+  zinc100: "#ede9e1",
+  fg: "#171816", // Protected queue
+  grey: "#c4b0a5", // FIFO comparison
   amber: "#f59e0b",
-  success: "#059669",
+  success: "#488158",
   danger: "#ef4444",
-  line: "#e4e4e7",
-  muted: "#71717a",
-  surface: "#ffffff",
+  line: "#ded9cf",
+  muted: "#75736c",
+  surface: "#faf8f3",
 };
 
 const axis = {
-  stroke: "#a1a1aa",
-  tick: { fill: "#71717a", fontSize: 11, fontWeight: 500 },
+  stroke: "#9b978e",
+  tick: { fill: "#75736c", fontSize: 11, fontWeight: 500 },
   tickLine: false,
-  axisLine: { stroke: "#e4e4e7" },
+  axisLine: { stroke: "#ded9cf" },
 } as const;
 
 const tooltip = {
@@ -65,13 +65,13 @@ const tooltip = {
     borderRadius: "14px",
     fontSize: "12px",
     fontWeight: 500,
-    color: "#18181b",
+    color: "#171816",
     boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04)",
     padding: "8px 14px",
   },
-  labelStyle: { color: "#71717a", marginBottom: 4, fontWeight: 600, fontSize: "11px", letterSpacing: "0.02em" },
-  itemStyle: { fontVariantNumeric: "tabular-nums", color: "#18181b", padding: "2px 0" },
-  cursor: { fill: "rgba(24, 24, 27, 0.03)", stroke: "#e4e4e7" },
+  labelStyle: { color: "#75736c", marginBottom: 4, fontWeight: 600, fontSize: "11px", letterSpacing: "0.02em" },
+  itemStyle: { fontVariantNumeric: "tabular-nums", color: "#171816", padding: "2px 0" },
+  cursor: { fill: "rgba(24, 24, 27, 0.03)", stroke: "#ded9cf" },
 } as const;
 
 export type Series = { key: string; name: string; color: string; dashed?: boolean };
@@ -91,11 +91,11 @@ export function ChartCard({
   className?: string;
 }) {
   return (
-    <div className={cx("rounded-3xl border border-zinc-200/80 bg-white p-6 sm:p-8 shadow-sm transition-all", className)}>
+    <div className={cx("rounded-xl border border-line bg-surface p-6 sm:p-8 shadow-sm transition-all", className)}>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="text-lg font-semibold tracking-tight text-zinc-900">{title}</h2>
-          {subtitle && <p className="mt-1 text-xs font-light text-zinc-500">{subtitle}</p>}
+          {subtitle && <p className="mt-1 text-xs font-normal text-zinc-500">{subtitle}</p>}
         </div>
         {right}
       </div>

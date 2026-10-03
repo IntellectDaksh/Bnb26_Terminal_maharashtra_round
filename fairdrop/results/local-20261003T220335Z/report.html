@@ -1,0 +1,130 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Fair Drop local benchmark</title>
+    <style>body{font:16px system-ui;background:#edf2f7;color:#182738;margin:0}main{max-width:1050px;margin:40px auto;background:white;padding:42px;border-radius:16px}h1{font-size:32px}.cards{display:flex;gap:20px}.card{flex:1;background:#eef4fb;padding:24px;border-radius:12px}strong{font-size:32px;display:block}table{border-collapse:collapse;width:100%;margin:25px 0}td,th{text-align:left;padding:12px;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;font:14px system-ui;line-height:1.6}small{color:#526478}@media print{body{background:white}main{margin:0;padding:10px}}</style>
+    <main><small>LOCAL BACKEND BENCHMARK · 2026-10-03T22:02:50.923157+00:00</small>
+    <h1>Fair Drop: bot resistance and human access</h1><p>Redis rate and device/network protection</p>
+    <p><b>Real localhost backend and database. Synthetic traffic and simulated challenge decisions.</b></p>
+    <div class="cards"><div class="card"><strong>90.46%</strong>Bot requests blocked<br><small>2,891 of 3,196</small></div>
+    <div class="card"><strong>100.0%</strong>Human registration success<br><small>Simulated identities; simulated challenge decisions</small></div></div>
+    <table><tr><th>Scenario</th><th>Requests</th><th>Blocked</th><th>Registered identities</th><th>p95 ms</th><th>Errors</th></tr><tr><td>dup</td><td>64</td><td>31.25%</td><td>10 / 10</td><td>635.82</td><td>0</td></tr><tr><td>flood</td><td>2,749</td><td>97.16%</td><td>10 / 10</td><td>36.21</td><td>0</td></tr><tr><td>legit</td><td>2,192</td><td>0.0%</td><td>1000 / 1000</td><td>906.01</td><td>0</td></tr><tr><td>multi</td><td>203</td><td>39.41%</td><td>20 / 100</td><td>904.06</td><td>0</td></tr><tr><td>speed</td><td>90</td><td>33.33%</td><td>0 / 30</td><td>1033.31</td><td>0</td></tr><tr><td>unauthenticated</td><td>90</td><td>100.0%</td><td>0 / 30</td><td>821.35</td><td>0</td></tr></table>
+    <h2>Findings</h2><ul><li>Missing/forged authentication and forged challenge decisions are measured separately from valid-challenge bots.</li><li>Authenticated flood polling: 97.16% blocked; Redis protection enabled.</li><li>Valid-challenge multi-account bots: 20.0% registered; device signals supplied to the backend.</li><li>All HTTP clients share localhost, exercising shared-network humans with distinct device signals.</li><li>Duplicate retries produced 10 database entries for 10 accounts; idempotency prevents duplicate entries, not bot access.</li><li>Confirmed tickets: 200 of capacity 200. Ticket winners depend on the randomized draw.</li><li>Confirmed tickets by scenario: {&#x27;legit&#x27;: 192, &#x27;multi&#x27;: 3, &#x27;dup&#x27;: 4, &#x27;flood&#x27;: 1}.</li></ul>
+    <h2>Method, configuration and full detail</h2><pre># Fair Drop — local bot and human traffic report
+
+Run: 2026-10-03T22:02:50.923157+00:00 · **Redis rate and device/network protection**
+
+**Bot requests blocked: 90.46%** (2891/3196).
+**Human registration success: 100.0%** (1000/1000).
+
+## Scenario results
+
+| Scenario | Requests | Defense blocks | Block % | Registered / attempted identities | p95 ms | Server/network errors |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| dup | 64 | 20 | 31.25% | 10 / 10 | 635.82 | 0 |
+| flood | 2749 | 2671 | 97.16% | 10 / 10 | 36.21 | 0 |
+| legit | 2192 | 0 | 0.0% | 1000 / 1000 | 906.01 | 0 |
+| multi | 203 | 80 | 39.41% | 20 / 100 | 904.06 | 0 |
+| speed | 90 | 30 | 33.33% | 0 / 30 | 1033.31 | 0 |
+| unauthenticated | 90 | 90 | 100.0% | 0 / 30 | 821.35 | 0 |
+
+### Registration defense blocking by scenario
+
+| Scenario | Identities blocked by defense % | Identity registration success % |
+| --- | ---: | ---: |
+| dup | 0.0% | 100.0% |
+| flood | 0.0% | 100.0% |
+| legit | 0.0% | 100.0% |
+| multi | 80.0% | 20.0% |
+| speed | 100.0% | 0.0% |
+| unauthenticated | 100.0% | 0.0% |
+
+### HTTP response breakdown
+
+| Scenario | Status counts | Rejection reasons |
+| --- | --- | --- |
+| dup | {&quot;200&quot;: 44, &quot;429&quot;: 20} | {&quot;rate_limited&quot;: 20} |
+| flood | {&quot;200&quot;: 78, &quot;429&quot;: 2671} | {&quot;rate_limited&quot;: 2671} |
+| legit | {&quot;200&quot;: 2192} | {} |
+| multi | {&quot;200&quot;: 123, &quot;429&quot;: 80} | {&quot;registration_abuse&quot;: 80} |
+| speed | {&quot;403&quot;: 30, &quot;200&quot;: 30, &quot;404&quot;: 30} | {&quot;security_rejected&quot;: 30, &quot;registration_not_found&quot;: 30} |
+| unauthenticated | {&quot;401&quot;: 90} | {&quot;invalid_token&quot;: 45, &quot;authentication_required&quot;: 45} |
+
+## What the scenarios mean
+
+- legit: authenticated identities with a simulated solved challenge; register, poll, and confirm if offered.
+- speed: authenticated identities with forged challenges, plus attempts to confirm without registering.
+- unauthenticated: missing or forged bearer tokens attempting registration and status reads.
+- flood: authenticated, solved-challenge bots repeatedly poll the status endpoint without delays.
+- multi: distinct authenticated accounts with solved challenges, grouped by a shared device/IP label.
+- dup: solved-challenge bots submit five concurrent registrations for the same account.
+
+## Findings
+
+- Missing/forged authentication and forged challenge decisions are measured separately from valid-challenge bots.
+- Authenticated flood polling: 97.16% blocked; Redis protection enabled.
+- Valid-challenge multi-account bots: 20.0% registered; device signals supplied to the backend.
+- All HTTP clients share localhost, exercising shared-network humans with distinct device signals.
+- Duplicate retries produced 10 database entries for 10 accounts; idempotency prevents duplicate entries, not bot access.
+- Confirmed tickets: 200 of capacity 200. Ticket winners depend on the randomized draw.
+- Confirmed tickets by scenario: {&#x27;legit&#x27;: 192, &#x27;multi&#x27;: 3, &#x27;dup&#x27;: 4, &#x27;flood&#x27;: 1}.
+
+## Database verification
+
+```json
+{
+  &quot;tickets_by_role&quot;: {
+    &quot;legit&quot;: 192,
+    &quot;multi&quot;: 3,
+    &quot;dup&quot;: 4,
+    &quot;flood&quot;: 1
+  },
+  &quot;registration_rows&quot;: 1040,
+  &quot;human_rows&quot;: 1000,
+  &quot;invalid_challenge_bot_rows&quot;: 0,
+  &quot;unauthenticated_bot_rows&quot;: 0,
+  &quot;duplicate_bot_rows&quot;: 10,
+  &quot;capacity&quot;: 200,
+  &quot;confirmed_tickets&quot;: 200
+}
+```
+
+## Configuration
+
+```json
+{
+  &quot;humans&quot;: 1000,
+  &quot;concurrency&quot;: 50,
+  &quot;flood_requests&quot;: 100,
+  &quot;pool_size&quot;: 5,
+  &quot;db_port&quot;: 55432,
+  &quot;api_port&quot;: 18000,
+  &quot;seed&quot;: 1337,
+  &quot;sustained_seconds&quot;: 30.0,
+  &quot;redis_protection&quot;: true,
+  &quot;database&quot;: &quot;fairdrop_security_b4995081a9b24dbd9a0b33cce539379a_test&quot;,
+  &quot;postgres&quot;: &quot;PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit&quot;,
+  &quot;python&quot;: &quot;3.12.14&quot;,
+  &quot;platform&quot;: &quot;Windows-11-10.0.26200-SP0&quot;,
+  &quot;api_workers&quot;: 1,
+  &quot;environment&quot;: &quot;test&quot;,
+  &quot;env_files_loaded&quot;: false,
+  &quot;development_bypass&quot;: false,
+  &quot;challenge&quot;: &quot;simulated Siteverify transport; real TurnstileVerifier&quot;,
+  &quot;auth&quot;: &quot;ES256; local JWKS&quot;,
+  &quot;mixed_seconds&quot;: 39.022,
+  &quot;mixed_requests&quot;: 5188,
+  &quot;mixed_rps&quot;: 132.95,
+  &quot;identity_sha256&quot;: &quot;2d42f81bd5ed8a9638718cea093470e1ceb35e4bcdfdd087c5d437c512a7138d&quot;,
+  &quot;migrations&quot;: [
+    &quot;20261003182932_fairdrop_core.sql&quot;,
+    &quot;20261003185217_backend_login_and_reservation_index.sql&quot;
+  ]
+}
+```
+
+## Scope and measurement
+
+This tests the actual backend routes, ES256 token verification, SQL migrations, restricted application database role, registration transactions, draw and confirmation against local PostgreSQL. Cloudflare Siteverify responses are simulated: sim.solved receives success; forged challenges receive rejection. No real CAPTCHA solving, Google sign-in, browser behavior or cloud service is measured. Ground-truth bot/human labels are assigned by the generator; the app does not receive those labels.
+
+Defense blocks count explicit authentication/challenge rejections and HTTP 429. Validation errors, business-rule conflicts, missing registrations, server errors and timeouts are not counted as bot detection. Duplicate registrations that safely return the existing entry are successful idempotent requests, not blocked bots. No ticket offer is a capacity outcome, not a human rejection.
+
+The headline block percentage is request-weighted and specific to this workload. Identity registration success is reported separately. Requests use a bounded closed-loop client; latency excludes waiting for a client slot. API, database and generator share one host. This is a finite local functional/load benchmark, not a production capacity or general bot-detection claim.
+</pre></main></html>

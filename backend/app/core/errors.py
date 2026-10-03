@@ -16,16 +16,19 @@ class ErrorResponse(BaseModel):
 
 
 class AppError(Exception):
-    def __init__(self, status: int, code: str, message: str):
+    def __init__(self, status: int, code: str, message: str, retry_after: int | None = None):
         self.status = status
         self.code = code
         self.message = message
+        self.retry_after = retry_after
 
 
 def install_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(AppError)
     async def application_error(request: Request, exc: AppError) -> JSONResponse:
-        headers = {"WWW-Authenticate": "Bearer"} if exc.status == 401 else None
+        headers = {"WWW-Authenticate": "Bearer"} if exc.status == 401 else {}
+        if exc.retry_after is not None:
+            headers["Retry-After"] = str(exc.retry_after)
         return JSONResponse(
             status_code=exc.status,
             content={"code": exc.code, "message": exc.message},

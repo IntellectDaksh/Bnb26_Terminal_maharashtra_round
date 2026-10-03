@@ -199,7 +199,7 @@ export default function SettingsPage() {
                         <span className="inline-flex size-2 rounded-full bg-emerald-500 animate-pulse" />
                       )}
                     </div>
-                    <p className="mt-0.5 text-xs text-zinc-500 font-light">{a.help}</p>
+                    <p className="mt-0.5 text-xs text-zinc-500 font-normal">{a.help}</p>
                   </div>
                   <Button
                     size="sm"
@@ -304,7 +304,7 @@ export default function SettingsPage() {
           <TableWrap>
             <table className="w-full min-w-[620px]">
               <thead>
-                <tr className="border-b border-zinc-200/80 bg-zinc-50/75">
+                <tr className="border-b border-line bg-zinc-50/75">
                   <th className={th}>Timestamp</th>
                   <th className={th}>Action Kind</th>
                   <th className={th}>Actor / Source</th>

@@ -33,6 +33,17 @@ external credentials; tests use signed test tokens or a dependency override.
 
 ## Security integration
 
+For Cloudflare Turnstile, set `TURNSTILE_SECRET_KEY` in `backend/.env` and the matching
+`NEXT_PUBLIC_TURNSTILE_SITE_KEY` in `frontend/.env.local`. The backend posts challenge
+tokens to Cloudflare Siteverify and requires the `register` action. Optionally set
+`TURNSTILE_EXPECTED_HOSTNAME` to `localhost` or your deployed hostname for an exact match.
+Allow that hostname in the Cloudflare widget settings. Expired or rejected challenges must
+be completed again. A configured Turnstile secret takes priority over the external service
+and always verifies tokens, even if the development bypass flag was previously enabled.
+Restart the API and frontend after changing environment files. For containers, rebuild the
+API with `docker compose up --build -d api`.
+
+Without a Turnstile secret, the external verification integration remains available.
 The security team's verification service receives a server-to-server POST:
 
 ```json
@@ -42,12 +53,54 @@ The security team's verification service receives a server-to-server POST:
 The request includes `Authorization: Bearer <SECURITY_VERIFICATION_SECRET>`.
 The response must be HTTP 200 with **boolean** `allowed`, and matching `user_id` and
 `event_id`. Tokens must be reusable for safe registration retries, or the external verifier must
-cache its decision for the same user/event. This backend does not implement bot detection.
+cache its decision for the same user/event. Abuse controls below supplement this challenge check.
 No configured verifier means registration fails closed with `security_unavailable`.
 
 For explicit local experiments only, set `SECURITY_ALLOW_DEVELOPMENT=true`. Production
 configuration rejects that bypass, plaintext database connections, and missing/HTTP security
 verification URLs. Configure allowed frontend origins via `CORS_ORIGINS` (JSON array).
+
+### Redis abuse protection
+
+Set `ABUSE_PROTECTION_ENABLED=true`, `REDIS_URL` and a random `ABUSE_KEY_SECRET`
+of at least 32 characters. All API workers must share these values. Production refuses
+disabled protection. Docker Compose supplies an internal Redis service and enables the
+guard; set the secret in `backend/.env`. Redis is not exposed on a host port in that stack.
+For hosted Redis, use its authenticated `rediss://` URL. Keep Redis private and durable:
+restarting an empty Redis resets the abuse budgets.
+
+Atomic token buckets apply across events to the verified account, separately for registration
+(3 immediate attempts, 1 token/20 seconds), status (5 immediate polls, 1 token/2 seconds), and
+confirmation (3 immediate attempts, 1 token/2 seconds). Thirty rejected requests in a
+60-second window trigger a fixed 60-second cooldown for that account and endpoint. Rejections
+return `429` with integer `Retry-After`; Redis outages return `503` with `Retry-After: 5`
+before SQL or challenge verification. Readiness checks Redis as well as PostgreSQL.
+These controls run after authentication and before database connection checkout.
+
+When protection is enabled, registration also requires `device_fp` (8–128 characters).
+The live frontend persists a random browser identifier across account switches and respects
+server cooldowns during both actions and automatic polling. After a solved challenge, atomic
+sets count distinct accounts per event: default cap 2 for the same device/network pair and 6
+for a device across networks, with a 24-hour window. Repeated accounts consume no extra
+slots. Counts reflect challenge-approved attempts, including attempts whose later SQL
+transaction fails. Redis keys contain HMAC digests rather than raw device/IP/user values.
+There is no IP-only registration cap: distinct devices on a shared network remain eligible.
+Thresholds are configurable in `.env.example`; shared-device households may require tuning.
+
+The ASGI client address is used; the guard never trusts arbitrary forwarded headers.
+When deploying behind a proxy, configure uvicorn's `--forwarded-allow-ips` with only the
+actual proxy addresses, and restrict direct API access. The proxy must overwrite forwarded
+headers. Browser IDs are weak signals that attackers can rotate. Edge controls are still
+needed for unauthenticated floods, distributed account/device rotation, and public catalog
+traffic. This is abuse reduction, not a proof that an authenticated account belongs to a human.
+
+For an explicit small live Siteverify check, run `uv run python -m loadtest.turnstile_smoke`.
+It uses Cloudflare's public [testing keys](https://developers.cloudflare.com/turnstile/troubleshooting/testing/),
+never loads application credentials, and writes `fairdrop/results/turnstile-live-smoke.json`.
+It checks real HTTPS responses and the backend's rejection behavior. The dummy success
+response lacks the required `register` action and correctly remains rejected by the backend.
+This does not validate successful production widget completion; that requires your own
+widget/secret pair and a real `register` token. Do not use public testing keys in production.
 
 ## Bootstrap
 
@@ -107,6 +160,7 @@ export TEST_DATABASE_URL=postgresql+asyncpg://postgres:password@localhost:5432/f
 uv run pytest -q
 # PowerShell
 $env:TEST_DATABASE_URL = 'postgresql+asyncpg://postgres:password@localhost:5432/fairdrop_test'
+$env:TEST_REDIS_URL = 'redis://localhost:6380/0'
 uv run pytest -q
 ```
 
@@ -114,6 +168,9 @@ The integration fixture **drops/recreates the fairdrop schema in this test datab
 creates a minimal auth identity fixture. It requires an owner role able to create test roles.
 It refuses database names not ending in `_test`. Never point it at an application database.
 Without `TEST_DATABASE_URL`, integration tests explicitly skip.
+Redis integration tests use unique namespaces and skip without `TEST_REDIS_URL`.
+CI runs both real PostgreSQL and Redis, including atomic limits, independent account/endpoint
+budgets, cooldown recovery, multi-account races, and shared-network humans.
 
 For a disposable test database without installing PostgreSQL locally:
 
@@ -141,8 +198,8 @@ The live dashboard offers Open registration, Close registration, and Draw queue 
 Close moves the registration deadline to database time while holding the event lock.
 The draw rejects entries still open and starts FIFO offers atomically.
 Participant pages poll every five seconds and use the server's three-minute expiry deadline.
-The saved local security bypass is for testing; the external security service is still
-required for production. See `../docs/BACKEND_INTEGRATION.md` for the adapter mapping.
+Production requires Cloudflare Turnstile or the external security service.
+See `../docs/BACKEND_INTEGRATION.md` for the adapter mapping.
 
 ## Containers
 

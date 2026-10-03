@@ -22,7 +22,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} scroll-smooth h-full antialiased`}>
-      <body className="flex min-h-full flex-col bg-zinc-50 text-zinc-900 font-sans selection:bg-emerald-900 selection:text-white">
+      <body className="flex min-h-full flex-col bg-bg text-zinc-900 font-sans selection:bg-zinc-900 selection:text-white">
         {children}
       </body>
     </html>

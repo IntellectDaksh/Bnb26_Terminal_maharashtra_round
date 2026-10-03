@@ -70,12 +70,12 @@ describe("live HTTP contract", () => {
   });
   afterEach(() => vi.unstubAllGlobals());
 
-  it("sends only a security token for registration and reconciles from the backend", async () => {
+  it("sends a security token and stable device signal and reconciles from the backend", async () => {
     const fetcher = vi.fn(async (url: string, init: RequestInit) => {
       expect(new Headers(init.headers).get("Authorization")).toBe("Bearer verified-by-backend");
       if (url.endsWith("/register")) {
         expect(init.method).toBe("POST");
-        expect(JSON.parse(init.body as string)).toEqual({ security_token: "captcha-result" });
+        expect(JSON.parse(init.body as string)).toEqual({ security_token: "captcha-result", device_fp: expect.any(String) });
         return Response.json({ created: true, registration });
       }
       return Response.json(url.endsWith("/me") ? queue : event);
@@ -86,6 +86,13 @@ describe("live HTTP contract", () => {
       full_name: "Participant", organization: "Test", eligibility_confirmed: true,
     })).toEqual({ created: true, me: { status: "REGISTERED", entry_id: entryId, registered_at: now } });
     expect(fetcher.mock.calls.every(([url]) => url.startsWith("http://127.0.0.1:8000/api/v1/events/"))).toBe(true);
+    const firstDevice = JSON.parse(fetcher.mock.calls[0][1].body as string).device_fp;
+    await api.register(eventId, {
+      turnstile_token: "captcha-result", idempotency_key: "retry-key-123",
+      full_name: "Participant", organization: "Test", eligibility_confirmed: true,
+    });
+    const registrations = fetcher.mock.calls.filter(([url]) => url.endsWith("/register"));
+    expect(JSON.parse(registrations[1][1].body as string).device_fp).toBe(firstDevice);
   });
   it("confirms through the owned event endpoint, without trusting a client reservation id", async () => {
     const confirmed = { ...hold, status: "CONFIRMED", confirmed_at: now };
@@ -108,5 +115,25 @@ describe("live HTTP contract", () => {
     const log = vi.spyOn(console, "error").mockImplementation(() => {});
     await expect(api.getEvent(eventId)).rejects.toMatchObject({ code: "contract_mismatch" });
     log.mockRestore();
+  });
+  it("honors Retry-After across automatic polls and resumes when it expires", async () => {
+    vi.useFakeTimers();
+    try {
+      const fetcher = vi.fn(async () => Response.json(
+        { code: "rate_limited", message: "Please wait." },
+        { status: 429, headers: { "Retry-After": "60" } },
+      ));
+      vi.stubGlobal("fetch", fetcher);
+      const { request } = await import("@/lib/api/live");
+      await expect(request(`/events/${eventId}/me`, QueueStatus)).rejects.toMatchObject({ status: 429, retryAfter: 60 });
+      await expect(request(`/events/${eventId}/me`, QueueStatus)).rejects.toMatchObject({ status: 429 });
+      expect(fetcher).toHaveBeenCalledTimes(1);
+      vi.advanceTimersByTime(60_001);
+      fetcher.mockImplementation(async () => Response.json(queue));
+      await expect(request(`/events/${eventId}/me`, QueueStatus)).resolves.toEqual(queue);
+      expect(fetcher).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

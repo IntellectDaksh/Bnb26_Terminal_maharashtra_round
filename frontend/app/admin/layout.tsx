@@ -6,7 +6,7 @@ import { Suspense, useEffect, useRef, useState, type ReactNode } from "react";
 import type { EventInfo } from "@/lib/contracts";
 import { API_MODE, api } from "@/lib/api";
 import { useAuth, type AuthUser } from "@/lib/auth";
-import { Button, ErrorState, Skeleton, cx } from "@/components/ui";
+import { Button, ErrorState, Skeleton, Wordmark, cx } from "@/components/ui";
 import { EventContext, Notice, PhaseBadge, usePoll, useEventPoll, withEvent } from "@/components/admin/shared";
 
 const NAV = [
@@ -38,7 +38,7 @@ function EventSwitcher({ id }: { id: string }) {
           id={id}
           value={eventId}
           onChange={(e) => router.replace(withEvent(path, e.target.value))}
-          className="h-10 w-full cursor-pointer appearance-none truncate rounded-full border border-zinc-800 bg-zinc-900/90 pl-3.5 pr-8 text-xs font-medium text-zinc-200 shadow-inner outline-none transition-colors hover:border-zinc-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+          className="h-10 w-full cursor-pointer appearance-none truncate rounded-lg border border-zinc-800 bg-zinc-900/90 pl-3.5 pr-8 text-xs font-medium text-zinc-200 shadow-inner outline-none transition-colors hover:border-zinc-700 focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400"
         >
           {events.map((e) => (
             <option key={e.id} value={e.id} className="bg-zinc-900 text-zinc-200">
@@ -71,7 +71,7 @@ function Nav({ onNavigate }: { onNavigate?: () => void }) {
                 className={cx(
                   "flex items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-medium transition-all duration-150",
                   active
-                    ? "bg-zinc-900 text-emerald-400 shadow-sm border border-zinc-800"
+                    ? "bg-zinc-900 text-white border border-zinc-800"
                     : "text-zinc-400 hover:bg-zinc-900/60 hover:text-zinc-200"
                 )}
               >
@@ -83,7 +83,7 @@ function Nav({ onNavigate }: { onNavigate?: () => void }) {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className={cx("size-4 shrink-0", active ? "text-emerald-500" : "text-zinc-500")}
+                    className={cx("size-4 shrink-0", active ? "text-white" : "text-zinc-500")}
                     aria-hidden
                   >
                     <path d={iconPath} />
@@ -92,7 +92,7 @@ function Nav({ onNavigate }: { onNavigate?: () => void }) {
                 </span>
                 {active && (
                   <span
-                    className="size-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"
+                    className="size-1.5 rounded-full bg-emerald-500 "
                     aria-hidden
                   />
                 )}
@@ -135,7 +135,7 @@ function Profile({ user, onSignOut }: { user: AuthUser; onSignOut: () => void })
           </div>
           <div className="min-w-0">
             <div className="truncate text-xs font-medium text-zinc-200">{user.name}</div>
-            <div className="truncate text-[11px] text-zinc-500 font-light">{user.email}</div>
+            <div className="truncate text-[11px] text-zinc-500 font-normal">{user.email}</div>
           </div>
         </div>
         <button
@@ -183,10 +183,7 @@ function Drawer({ open, onClose, children }: { open: boolean; onClose: () => voi
         className="rise absolute inset-y-0 left-0 flex w-[280px] max-w-[85vw] flex-col gap-6 border-r border-zinc-800/80 bg-zinc-950 p-6 text-zinc-300"
       >
         <div className="flex items-center justify-between pb-2 border-b border-zinc-800">
-          <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-tight uppercase text-white">
-            <span className="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
-            Fair Drop
-          </span>
+          <Wordmark className="text-white" />
           <button onClick={onClose} className="rounded-full px-2.5 py-1 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-white">
             Close
           </button>
@@ -205,7 +202,7 @@ function Shell({ user, onSignOut, children }: { user: AuthUser; onSignOut: () =>
 
   if (!current)
     return (
-      <div className="grid min-h-dvh place-items-center bg-zinc-50 px-4">
+      <div className="grid min-h-dvh place-items-center bg-bg px-4">
         {events.error ? (
           <Notice error={events.error} retryIn={events.retryIn} />
         ) : events.loading ? (
@@ -247,17 +244,14 @@ function EventShell({
 
   return (
     <EventContext.Provider value={{ ...poll, eventId, event: poll.data ?? initial, events }}>
-      <div className="min-h-dvh bg-zinc-50 text-zinc-900 lg:flex">
+      <div className="admin-page min-h-dvh text-zinc-900 lg:flex">
         {/* Dark zinc navigation sidebar */}
-        <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col justify-between border-r border-zinc-800/80 bg-zinc-950 px-5 py-7 text-zinc-300 lg:flex shadow-xl">
+        <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col justify-between border-r border-zinc-800/80 bg-zinc-950 px-5 py-7 text-zinc-300 lg:flex">
           <div className="grid gap-6">
             <div className="grid gap-5">
               <Link href={withEvent("/admin", eventId)} className="flex items-center justify-between px-1">
-                <span className="inline-flex items-center gap-2 text-sm font-semibold tracking-tight uppercase text-white">
-                  <span className="size-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.7)]" />
-                  Fair Drop
-                </span>
-                <span className="rounded-full bg-zinc-900 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-400">
+                <Wordmark className="text-white" />
+                <span className="rounded-full bg-zinc-900 border border-zinc-700 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-zinc-300">
                   Admin
                 </span>
               </Link>
@@ -270,16 +264,13 @@ function EventShell({
 
         {/* Mobile header */}
         <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-zinc-800/80 bg-zinc-950 px-4 text-zinc-200 lg:hidden">
-          <Link href={withEvent("/admin", eventId)} className="inline-flex items-center gap-2 text-xs font-semibold tracking-tight uppercase text-white">
-            <span className="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]" />
-            Fair Drop Admin
-          </Link>
+          <Link href={withEvent("/admin", eventId)} className="text-white"><Wordmark /><span className="sr-only"> Admin</span></Link>
           <button
             ref={menuBtn}
             onClick={() => setOpen(true)}
             aria-expanded={open}
             aria-controls="admin-drawer"
-            className="h-8 rounded-full border border-zinc-800 bg-zinc-900 px-3.5 text-xs font-medium text-zinc-200 hover:bg-zinc-800"
+            className="h-8 rounded-lg border border-zinc-800 bg-zinc-900 px-3.5 text-xs font-medium text-zinc-200 hover:bg-zinc-800"
           >
             Menu
           </button>
@@ -315,13 +306,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   if (!user?.isAdmin)
     return (
-      <main className="grid min-h-dvh place-items-center bg-zinc-50 px-4">
-        <div className="w-full max-w-sm rounded-3xl border border-zinc-200/80 bg-white p-8 shadow-sm text-center">
+      <main className="grid min-h-dvh place-items-center bg-bg px-4">
+        <div className="auth-card text-center">
           <div className="mb-6 flex justify-center">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold tracking-tight uppercase text-zinc-900">
-              <span className="size-2.5 rounded-full bg-emerald-600 shadow-[0_0_8px_rgba(5,150,105,0.5)]" />
-              Fair Drop Admin
-            </span>
+            <Wordmark />
           </div>
           <ErrorState
             title="Admins only"

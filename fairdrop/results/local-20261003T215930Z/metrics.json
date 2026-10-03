@@ -1,0 +1,184 @@
+{
+  "started_utc": "2026-10-03T21:59:05.865193+00:00",
+  "verdict": "Baseline: abuse protection disabled",
+  "bot_requests": 1475,
+  "bot_blocked_requests": 120,
+  "bot_request_block_pct": 8.14,
+  "roles": {
+    "dup": {
+      "requests": 61,
+      "defense_rejections": 0,
+      "request_block_pct": 0.0,
+      "successful_requests": 61,
+      "server_or_transport_errors": 0,
+      "registration_identities_attempted": 10,
+      "registration_identities_accepted": 10,
+      "registration_defense_block_pct": 0.0,
+      "registration_accept_pct": 100.0,
+      "statuses": {
+        "200": 61
+      },
+      "reasons": {},
+      "p50_ms": 104.14,
+      "p95_ms": 308.13,
+      "registration_p95_ms": 357.66,
+      "p99_ms": 640.51
+    },
+    "flood": {
+      "requests": 1012,
+      "defense_rejections": 0,
+      "request_block_pct": 0.0,
+      "successful_requests": 1012,
+      "server_or_transport_errors": 0,
+      "registration_identities_attempted": 10,
+      "registration_identities_accepted": 10,
+      "registration_defense_block_pct": 0.0,
+      "registration_accept_pct": 100.0,
+      "statuses": {
+        "200": 1012
+      },
+      "reasons": {},
+      "p50_ms": 105.41,
+      "p95_ms": 309.24,
+      "registration_p95_ms": 295.88,
+      "p99_ms": 543.41
+    },
+    "legit": {
+      "requests": 2175,
+      "defense_rejections": 0,
+      "request_block_pct": 0.0,
+      "successful_requests": 2175,
+      "server_or_transport_errors": 0,
+      "registration_identities_attempted": 1000,
+      "registration_identities_accepted": 1000,
+      "registration_defense_block_pct": 0.0,
+      "registration_accept_pct": 100.0,
+      "statuses": {
+        "200": 2175
+      },
+      "reasons": {},
+      "p50_ms": 119.79,
+      "p95_ms": 367.0,
+      "registration_p95_ms": 423.89,
+      "p99_ms": 546.34
+    },
+    "multi": {
+      "requests": 222,
+      "defense_rejections": 0,
+      "request_block_pct": 0.0,
+      "successful_requests": 222,
+      "server_or_transport_errors": 0,
+      "registration_identities_attempted": 100,
+      "registration_identities_accepted": 100,
+      "registration_defense_block_pct": 0.0,
+      "registration_accept_pct": 100.0,
+      "statuses": {
+        "200": 222
+      },
+      "reasons": {},
+      "p50_ms": 119.75,
+      "p95_ms": 419.02,
+      "registration_p95_ms": 534.91,
+      "p99_ms": 619.3
+    },
+    "speed": {
+      "requests": 90,
+      "defense_rejections": 30,
+      "request_block_pct": 33.33,
+      "successful_requests": 30,
+      "server_or_transport_errors": 0,
+      "registration_identities_attempted": 30,
+      "registration_identities_accepted": 0,
+      "registration_defense_block_pct": 100.0,
+      "registration_accept_pct": 0.0,
+      "statuses": {
+        "403": 30,
+        "200": 30,
+        "404": 30
+      },
+      "reasons": {
+        "security_rejected": 30,
+        "registration_not_found": 30
+      },
+      "p50_ms": 98.69,
+      "p95_ms": 422.5,
+      "registration_p95_ms": 669.57,
+      "p99_ms": 708.27
+    },
+    "unauthenticated": {
+      "requests": 90,
+      "defense_rejections": 90,
+      "request_block_pct": 100.0,
+      "successful_requests": 0,
+      "server_or_transport_errors": 0,
+      "registration_identities_attempted": 30,
+      "registration_identities_accepted": 0,
+      "registration_defense_block_pct": 100.0,
+      "registration_accept_pct": 0.0,
+      "statuses": {
+        "401": 90
+      },
+      "reasons": {
+        "invalid_token": 45,
+        "authentication_required": 45
+      },
+      "p50_ms": 101.78,
+      "p95_ms": 333.16,
+      "registration_p95_ms": 401.97,
+      "p99_ms": 551.95
+    }
+  },
+  "database_checks": {
+    "tickets_by_role": {
+      "legit": 175,
+      "multi": 22,
+      "dup": 1,
+      "flood": 2
+    },
+    "registration_rows": 1120,
+    "human_rows": 1000,
+    "invalid_challenge_bot_rows": 0,
+    "unauthenticated_bot_rows": 0,
+    "duplicate_bot_rows": 10,
+    "capacity": 200,
+    "confirmed_tickets": 200
+  },
+  "findings": [
+    "Missing/forged authentication and forged challenge decisions are measured separately from valid-challenge bots.",
+    "Authenticated flood polling: 0.0% blocked; Redis protection disabled.",
+    "Valid-challenge multi-account bots: 100.0% registered; device signals supplied to the backend.",
+    "All HTTP clients share localhost, exercising shared-network humans with distinct device signals.",
+    "Duplicate retries produced 10 database entries for 10 accounts; idempotency prevents duplicate entries, not bot access.",
+    "Confirmed tickets: 200 of capacity 200. Ticket winners depend on the randomized draw.",
+    "Confirmed tickets by scenario: {'legit': 175, 'multi': 22, 'dup': 1, 'flood': 2}."
+  ],
+  "config": {
+    "humans": 1000,
+    "concurrency": 25,
+    "flood_requests": 100,
+    "pool_size": 5,
+    "db_port": 55432,
+    "api_port": 18000,
+    "seed": 1337,
+    "sustained_seconds": 0.0,
+    "redis_protection": false,
+    "database": "fairdrop_security_88f759b094ff49ff8d141b75aa3801c7_test",
+    "postgres": "PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit",
+    "python": "3.12.14",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "api_workers": 1,
+    "environment": "test",
+    "env_files_loaded": false,
+    "development_bypass": false,
+    "challenge": "simulated Siteverify transport; real TurnstileVerifier",
+    "auth": "ES256; local JWKS",
+    "mixed_seconds": 19.954,
+    "mixed_requests": 3450,
+    "mixed_rps": 172.9,
+    "identity_sha256": "2d42f81bd5ed8a9638718cea093470e1ceb35e4bcdfdd087c5d437c512a7138d",
+    "migrations": [
+      "20261003182932_fairdrop_core.sql",
+      "20261003185217_backend_login_and_reservation_index.sql"
+    ]
+  }
+}

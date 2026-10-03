@@ -28,7 +28,7 @@ export default function Status() {
       }
     : isSoldOut
       ? {
-          badgeTone: "bg-zinc-100 text-zinc-800 border-zinc-200/80",
+          badgeTone: "bg-zinc-100 text-zinc-800 border-line",
           badgeText: "Drop Concluded",
           eyebrow: "All Seats Claimed",
           title: "This drop is sold out",
@@ -47,13 +47,13 @@ export default function Status() {
         };
 
   return (
-    <PageShell className="pt-8 sm:pt-10">
+    <PageShell>
       <div className="mx-auto max-w-3xl">
         <BackLink href={eventPath(eventId)}>{event.name}</BackLink>
 
         {/* Central Graceful Card */}
-        <div className="mt-8 bg-white p-8 sm:p-12 rounded-3xl border border-zinc-200/80 shadow-xl shadow-emerald-900/5 text-center">
-          <EmptyArt className="mx-auto overflow-hidden rounded-2xl w-full max-w-[280px]" />
+        <div className="mt-8 bg-surface p-8 sm:p-12 rounded-xl border border-line shadow-sm  text-center">
+          <EmptyArt className="mx-auto overflow-hidden rounded-xl w-full max-w-[280px]" />
 
           <div className="mt-8 flex justify-center">
             <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold border ${config.badgeTone}`}>
@@ -63,28 +63,28 @@ export default function Status() {
           </div>
 
           <div className="eyebrow mt-4">{config.eyebrow}</div>
-          <h1 className="display mt-2 text-[clamp(2.2rem,5vw,3.6rem)] text-zinc-900">{config.title}</h1>
+          <h1 className="page-title mt-2">{config.title}</h1>
           <p className="mt-4 text-base leading-relaxed text-zinc-600 max-w-xl mx-auto">{config.body}</p>
 
           {/* Supportive Telemetry / Transparency Stats */}
           {isSoldOut && (
             <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-3 text-left">
-              <div className="rounded-2xl border border-zinc-100 bg-zinc-50/80 p-4">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Seats Allocated</div>
-                <div className="num mt-1 text-xl font-bold text-zinc-900">{fmtNum(event.seats_confirmed)} / {fmtNum(event.seats_total)}</div>
+              <div className="rounded-xl border border-zinc-100 bg-zinc-50/80 p-4">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Seats Allocated</div>
+                <div className="num mt-1 text-xl font-semibold text-zinc-900">{fmtNum(event.seats_confirmed)} / {fmtNum(event.seats_total)}</div>
               </div>
-              <div className="rounded-2xl border border-zinc-100 bg-zinc-50/80 p-4">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Total Entrants</div>
-                <div className="num mt-1 text-xl font-bold text-zinc-900">{fmtNum(event.registrations)}</div>
+              <div className="rounded-xl border border-zinc-100 bg-zinc-50/80 p-4">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Total Entrants</div>
+                <div className="num mt-1 text-xl font-semibold text-zinc-900">{fmtNum(event.registrations)}</div>
               </div>
-              <div className="col-span-2 sm:col-span-1 rounded-2xl border border-zinc-100 bg-zinc-50/80 p-4">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Fairness Audit</div>
+              <div className="col-span-2 sm:col-span-1 rounded-xl border border-zinc-100 bg-zinc-50/80 p-4">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Fairness Audit</div>
                 <div className="mt-1 text-xs font-semibold text-emerald-700">✓ Verified Shuffle</div>
               </div>
             </div>
           )}
 
-          <div className="mt-6 rounded-2xl border border-zinc-100 bg-zinc-50/60 p-4 text-xs text-zinc-500 max-w-xl mx-auto">
+          <div className="mt-6 rounded-xl border border-zinc-100 bg-zinc-50/60 p-4 text-xs text-zinc-500 max-w-xl mx-auto">
             {config.reassurance}
           </div>
 
@@ -92,13 +92,13 @@ export default function Status() {
           <div className="mt-9 flex flex-wrap justify-center gap-3">
             <Link
               href="/events"
-              className="inline-flex items-center justify-center gap-2 font-semibold bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 px-7 rounded-xl shadow-lg shadow-emerald-900/10 transition-all text-sm active:scale-[0.99]"
+              className="inline-flex items-center justify-center gap-2 font-semibold bg-zinc-900 hover:bg-zinc-800 text-white py-3.5 px-7 rounded-xl shadow-sm  transition-all text-sm active:scale-[0.99]"
             >
               Browse other drops <span aria-hidden>→</span>
             </Link>
             <Link
               href={eventPath(eventId)}
-              className="inline-flex items-center justify-center gap-2 font-semibold bg-white hover:bg-zinc-50 border border-zinc-200 hover:border-zinc-300 text-zinc-800 py-3.5 px-6 rounded-xl shadow-sm transition-all text-sm"
+              className="inline-flex items-center justify-center gap-2 font-semibold bg-surface hover:bg-zinc-50 border border-line hover:border-zinc-300 text-zinc-800 py-3.5 px-6 rounded-xl shadow-sm transition-all text-sm"
             >
               Back to {event.name}
             </Link>

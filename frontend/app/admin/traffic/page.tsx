@@ -146,24 +146,24 @@ export default function TrafficPage() {
                 type="button"
                 onClick={() => setProfile(v)}
                 className={cx(
-                  "flex flex-col text-left p-4 rounded-2xl border transition-all cursor-pointer",
+                  "flex flex-col text-left p-4 rounded-xl border transition-all cursor-pointer",
                   profile === v
-                    ? "border-emerald-500 bg-emerald-50/50 shadow-sm ring-1 ring-emerald-500"
-                    : "border-zinc-200/80 bg-zinc-50/50 hover:bg-zinc-100/60 text-zinc-600"
+                    ? "border-zinc-900 bg-bg-2 ring-1 ring-zinc-900"
+                    : "border-line bg-zinc-50/50 hover:bg-zinc-100/60 text-zinc-600"
                 )}
               >
                 <div className="flex items-center justify-between">
-                  <span className={cx("text-sm font-semibold", profile === v ? "text-emerald-900" : "text-zinc-900")}>
+                  <span className={cx("text-sm font-semibold", profile === v ? "text-fg" : "text-zinc-900")}>
                     {label}
                   </span>
                   <span
                     className={cx(
                       "size-2 rounded-full",
-                      profile === v ? "bg-emerald-500" : "bg-zinc-300"
+                      profile === v ? "bg-zinc-900" : "bg-zinc-300"
                     )}
                   />
                 </div>
-                <span className="mt-1 text-xs text-zinc-500 font-light">{desc}</span>
+                <span className="mt-1 text-xs text-zinc-500 font-normal">{desc}</span>
               </button>
             ))}
           </div>
@@ -230,7 +230,7 @@ export default function TrafficPage() {
       <section aria-label="Live metrics" className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-6">
         {!m ? (
           Array.from({ length: 6 }, (_, i) => (
-            <div key={i} className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm">
+            <div key={i} className="rounded-xl border border-line bg-surface p-5 shadow-sm">
               <Skeleton className="h-16" />
             </div>
           ))
@@ -306,14 +306,14 @@ export default function TrafficPage() {
         {!attacks.data ? (
           <Skeleton className="h-48" />
         ) : recentEvents.length === 0 ? (
-          <div className="py-8 text-center text-sm text-zinc-400 font-light">
+          <div className="py-8 text-center text-sm text-zinc-400 font-normal">
             No anomalous traffic detected. Edge rate limits operating in normal bounds.
           </div>
         ) : (
           <TableWrap>
             <table className="w-full min-w-[620px]">
               <thead>
-                <tr className="border-b border-zinc-200/80 bg-zinc-50/75">
+                <tr className="border-b border-line bg-zinc-50/75">
                   <th className={th}>Timestamp</th>
                   <th className={th}>Client Type</th>
                   <th className={th}>Session ID</th>

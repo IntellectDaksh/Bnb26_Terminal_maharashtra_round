@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { API_MODE, ApiError, backoff } from "@/lib/api";
 import type { AuditEntry, EventInfo, SimParams } from "@/lib/contracts";
-import { Card, StatusBadge, cx } from "@/components/ui";
+import { cx } from "@/components/ui";
 
 export type PollState<T> = { data: T | null; error: ApiError | null; loading: boolean; retryIn: number };
 
@@ -64,7 +64,7 @@ export function Notice({ error, retryIn }: { error: ApiError | null; retryIn?: n
     <div
       role="status"
       className={cx(
-        "flex items-center gap-2.5 rounded-2xl border px-4 py-3 text-xs font-medium backdrop-blur-md shadow-sm transition-all",
+        "flex items-center gap-2.5 rounded-xl border px-4 py-3 text-xs font-medium backdrop-blur-md shadow-sm transition-all",
         soft
           ? "border-amber-200/80 bg-amber-50/90 text-amber-800"
           : "border-red-200/80 bg-red-50/90 text-red-700"
@@ -106,10 +106,10 @@ export function PhaseBadge({ phase, className }: { phase: string; className?: st
     <span
       className={cx(
         "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wider transition-all",
-        isLive && "bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-[0_0_12px_rgba(5,150,105,0.15)]",
-        isReady && "bg-zinc-100 text-zinc-800 border border-zinc-200",
+        isLive && "bg-emerald-50 text-emerald-700 border border-emerald-200/80 ",
+        isReady && "bg-zinc-100 text-zinc-800 border border-line",
         isClosed && "bg-amber-50 text-amber-700 border border-amber-200/80",
-        (isSoldOut || isEnded) && "bg-zinc-100 text-zinc-500 border border-zinc-200/80",
+        (isSoldOut || isEnded) && "bg-zinc-100 text-zinc-500 border border-line",
         className
       )}
     >
@@ -149,21 +149,21 @@ export function PageHeader({
     <header className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2.5">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-emerald-700 border border-emerald-200/70">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-bg-2 px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wider text-muted border border-line">
             <span className="size-1.5 rounded-full bg-emerald-500" aria-hidden />
             {ev.name} · {ev.city}
           </span>
           {badge}
           {API_MODE === "mock" && (
-            <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-[11px] font-medium text-zinc-600 border border-zinc-200">
+            <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-[11px] font-medium text-zinc-600 border border-line">
               Mock mode
             </span>
           )}
         </div>
-        <h1 className="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight text-zinc-900 leading-tight">
+        <h1 className="page-title mt-3">
           {title}
         </h1>
-        {subtitle && <p className="mt-1.5 max-w-2xl text-sm font-light text-zinc-500 leading-relaxed">{subtitle}</p>}
+        {subtitle && <p className="mt-1.5 max-w-2xl text-sm font-normal text-zinc-500 leading-relaxed">{subtitle}</p>}
       </div>
       {right && <div className="flex flex-wrap items-center gap-2.5">{right}</div>}
     </header>
@@ -184,11 +184,11 @@ export function Panel({
   className?: string;
 }) {
   return (
-    <div className={cx("rounded-3xl border border-zinc-200/80 bg-white p-6 sm:p-8 shadow-sm transition-all", className)}>
+    <div className={cx("rounded-xl border border-line bg-surface p-6 sm:p-8 shadow-sm transition-all", className)}>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="text-lg font-semibold tracking-tight text-zinc-900">{title}</h2>
-          {subtitle && <p className="mt-1 text-xs font-light text-zinc-500">{subtitle}</p>}
+          {subtitle && <p className="mt-1 text-xs font-normal text-zinc-500">{subtitle}</p>}
         </div>
         {right}
       </div>
@@ -198,18 +198,18 @@ export function Panel({
 }
 
 export function Empty({ children }: { children: ReactNode }) {
-  return <div className="grid min-h-28 place-items-center py-8 text-center text-sm font-light text-zinc-400">{children}</div>;
+  return <div className="grid min-h-28 place-items-center py-8 text-center text-sm font-normal text-zinc-400">{children}</div>;
 }
 
 /** Horizontal scroll container for tables on narrow screens. */
 export function TableWrap({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cx("overflow-x-auto rounded-2xl border border-zinc-200/70 bg-white shadow-sm", className)}>
+    <div className={cx("overflow-x-auto rounded-xl border border-line bg-surface shadow-sm", className)}>
       {children}
     </div>
   );
 }
-export const th = "border-b border-zinc-200/80 bg-zinc-50/75 px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 whitespace-nowrap";
+export const th = "border-b border-line bg-zinc-50/75 px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 whitespace-nowrap";
 export const td = "border-b border-zinc-100 px-5 py-3.5 text-sm text-zinc-800 last:border-b-0 whitespace-nowrap";
 
 export function IntegrityLine({

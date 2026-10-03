@@ -2,6 +2,12 @@ services:
   api:
     build: ./backend
     env_file: ./backend/.env
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      ABUSE_PROTECTION_ENABLED: "true"
+    depends_on:
+      redis:
+        condition: service_healthy
     ports:
       - "127.0.0.1:8000:8000"
     restart: unless-stopped
@@ -18,3 +24,16 @@ services:
     depends_on:
       api:
         condition: service_healthy
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+volumes:
+  redis-data:

@@ -57,6 +57,12 @@ by this MVP. Ticket holder display comes from the signed-in profile; the reserva
 is the permanent ticket reference. UI schedule/venue/category are explicitly test presentation
 defaults: the shown schedule is the registration deadline, not a production event itinerary.
 
+For live Cloudflare verification, put `NEXT_PUBLIC_TURNSTILE_SITE_KEY` in
+`frontend/.env.local` and the matching `TURNSTILE_SECRET_KEY` in `backend/.env`.
+The widget sends the `register` action and the backend verifies it through Siteverify.
+`TURNSTILE_EXPECTED_HOSTNAME` optionally restricts successful responses to one hostname.
+The frontend server's `TURNSTILE_SECRET_KEY` is only used by the mock verification route.
+
 Live `/admin` displays actual database counts and Open, Close, Draw controls. Early close
 locks the event before moving the deadline; it cannot reopen or redraw the allocation.
 Draw both fixes the randomized queue and starts admission in one transaction.

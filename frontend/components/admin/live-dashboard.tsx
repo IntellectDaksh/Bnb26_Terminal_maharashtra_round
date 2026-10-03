@@ -5,7 +5,7 @@ import { useState } from "react";
 import { getAdminStatus, liveAdminAction } from "@/lib/api/live";
 import { ApiError } from "@/lib/api";
 import { Button, MetricCard, Skeleton } from "@/components/ui";
-import { Notice, useEventPoll, usePoll } from "./shared";
+import { Notice, PageHeader, Panel, useEventPoll, usePoll } from "./shared";
 
 export function LiveDashboard() {
   const event = useEventPoll();
@@ -28,10 +28,7 @@ export function LiveDashboard() {
     Date.parse(snapshot.server_time) >= Date.parse(snapshot.event.registration_closes_at);
   return (
     <section className="space-y-6">
-      <header>
-        <h1 className="text-3xl font-semibold">Live allocation</h1>
-        <p className="mt-2 text-sm text-zinc-600">Open registration, close the entry window, then draw the queue. Offered places expire after three minutes.</p>
-      </header>
+      <PageHeader title="Live allocation" subtitle="Manage registration and seat offers for this drop. Every participant gets the same fair start." />
       <Notice error={error ?? status.error} />
       {!snapshot ? <Skeleton className="h-40" /> : <>
         <p className="text-sm">Status: <strong>{snapshot.event.status}</strong> · Registration closes: {new Date(snapshot.event.registration_closes_at).toLocaleString()}</p>
@@ -44,12 +41,14 @@ export function LiveDashboard() {
           <MetricCard label="Available" value={snapshot.available_capacity} />
           <MetricCard label="Expired" value={snapshot.expired} />
         </div>
-        <div className="flex flex-wrap gap-3">
-          <Button disabled={pending || snapshot.event.status !== "DRAFT"} onClick={() => act("open")}>Open registration</Button>
-          <Button disabled={pending || snapshot.event.status !== "OPEN" || canDraw} onClick={() => act("close")}>Close registration</Button>
-          <Button variant="primary" disabled={pending || !canDraw} onClick={() => act("draw")}>Draw queue and offer places</Button>
-        </div>
-        <Link href={`/events/${event.eventId}`} className="text-sm underline">Open participant page</Link>
+        <Panel title="Drop controls" subtitle="Open registration, close the entry window, then draw the queue.">
+          <div className="flex flex-wrap gap-3">
+            <Button disabled={pending || snapshot.event.status !== "DRAFT"} onClick={() => act("open")}>Open registration</Button>
+            <Button variant="secondary" disabled={pending || snapshot.event.status !== "OPEN" || canDraw} onClick={() => act("close")}>Close registration</Button>
+            <Button variant="primary" disabled={pending || !canDraw} onClick={() => act("draw")}>Draw queue and offer places</Button>
+          </div>
+          <Link href={`/events/${event.eventId}`} className="mt-5 inline-flex text-sm font-medium text-muted hover:text-fg">Open participant page →</Link>
+        </Panel>
       </>}
     </section>
   );
